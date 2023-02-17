@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aaron.epsilon_backend.modelos.entidades.Categorias;
-import com.aaron.epsilon_backend.modelos.servicios.interfaces.ICategoriasService;
+import com.aaron.epsilon_backend.modelos.entidades.Direcciones;
+import com.aaron.epsilon_backend.modelos.servicios.interfaces.IDireccionesService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,15 +24,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 @CrossOrigin(origins = {"*"})
 @RestController
-@RequestMapping("/api/categorias")
-public class CategoriasRestController {
+@RequestMapping("/api/direcciones")
+public class DireccionesRestController {
 
 	@Autowired
-	private ICategoriasService categoriasService;
+	private IDireccionesService direccionesService;
 	
-    @GetMapping
+	@GetMapping
     @Operation(
-    		summary = "Devuelve todas las categorias", description = "Devuelve todas las categorias",
+    		summary = "Devuelve todas las direcciones", description = "Devuelve todas las direcciones",
     		responses = {
     				@ApiResponse(
     						responseCode = "200",
@@ -44,11 +44,11 @@ public class CategoriasRestController {
     						content = @Content())
     		})
     public ResponseEntity<?> getAll() {
-    	List<Categorias> listaCategorias = new ArrayList<>();
+    	List<Direcciones> listaDirecciones = new ArrayList<>();
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
-			listaCategorias = categoriasService.findAll();
+			listaDirecciones = direccionesService.findAll();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put("mensaje", "Error al conectar con la base de datos");
 			response.put("error", e.getMessage().concat(":")
@@ -56,12 +56,12 @@ public class CategoriasRestController {
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return new ResponseEntity<List<Categorias>>(listaCategorias,HttpStatus.OK);
+		return new ResponseEntity<List<Direcciones>>(listaDirecciones,HttpStatus.OK);
     }
-    
-    @GetMapping("/{id}")
+	
+	@GetMapping("/{id}")
     @Operation(
-    		summary = "Devuelve una categoría dado un id", description = "Devuelve una categoría dado un id",
+    		summary = "Devuelve una dirección dado un id", description = "Devuelve una dirección dado un id",
     		responses = {
     				@ApiResponse(
     						responseCode = "200",
@@ -69,7 +69,7 @@ public class CategoriasRestController {
     						content = @Content()),
     				@ApiResponse(
     						responseCode = "404",
-    						description = "No se ha encontrado una categoría con ese id",
+    						description = "No se ha encontrado una dirección con ese id",
     						content = @Content()),
 					@ApiResponse(
     						responseCode = "500",
@@ -77,22 +77,22 @@ public class CategoriasRestController {
     						content = @Content())
     		})
 	public ResponseEntity<?> getById(@PathVariable Long id){
-		Categorias categoria = null;
+		Direcciones direccion = null;
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
-			categoria = categoriasService.findById(id);
+			direccion = direccionesService.findById(id);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put("mensaje", "Error al conectar con la base de datos");
 			response.put("error", e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		if(categoria==null) { // El id no existe
-			response.put("mensaje", "La categoría con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
+		if(direccion==null) { // El id no existe
+			response.put("mensaje", "La dirección con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
 		}
 		
-		return new ResponseEntity<Categorias>(categoria,HttpStatus.OK);
+		return new ResponseEntity<Direcciones>(direccion,HttpStatus.OK);
 	}
 }
