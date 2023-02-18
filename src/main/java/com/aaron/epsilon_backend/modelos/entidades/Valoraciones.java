@@ -20,7 +20,7 @@ public class Valoraciones implements java.io.Serializable {
 	private int id;
 	private Usuarios usuarioValorado;
 	private Usuarios usuarioValorador;
-	private Integer estrelas;
+	private Integer estrellas;
 
 	public Valoraciones() {
 	}
@@ -32,11 +32,11 @@ public class Valoraciones implements java.io.Serializable {
 	}
 
 	public Valoraciones(int id, Usuarios usuarioValorado, Usuarios usuarioValorador,
-			Integer estrelas) {
+			Integer estrellas) {
 		this.id = id;
 		this.usuarioValorado = usuarioValorado;
 		this.usuarioValorador = usuarioValorador;
-		this.estrelas = estrelas;
+		this.estrellas = estrellas;
 	}
 
 	@Id
@@ -70,13 +70,13 @@ public class Valoraciones implements java.io.Serializable {
 		this.usuarioValorado = usuario;
 	}
 
-	@Column(name = "estrelas")
+	@Column(name = "estrellas")
 	public Integer getEstrelas() {
-		return this.estrelas;
+		return this.estrellas;
 	}
 
-	public void setEstrelas(Integer estrelas) {
-		this.estrelas = estrelas;
+	public void setEstrelas(Integer estrellas) {
+		this.estrellas = estrellas;
 	}
 
 }
