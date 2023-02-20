@@ -9,6 +9,8 @@ public interface IUsuariosService {
 	public List<Usuarios> findAll();
 	
 	public Usuarios findById(Long id);
+	
+	public Usuarios findByCorreo(String correo);
 
 	public Usuarios save(Usuarios usuario);
 	

@@ -27,6 +27,12 @@ public class UsuariosServiceImpl implements IUsuariosService {
 	public Usuarios findById(Long id) {
 		return usuariosDAO.findById(id).orElse(null);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Usuarios findByCorreo(String correo) {
+		return usuariosDAO.findByCorreo(correo);
+	}
 
 	@Override
 	public Usuarios save(Usuarios usuario) {

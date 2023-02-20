@@ -76,7 +76,7 @@ public class DireccionesRestController {
     						description = "Error al conectar con la base de datos",
     						content = @Content())
     		})
-	public ResponseEntity<?> getById(@PathVariable Long id){
+	public ResponseEntity<?> getById(@PathVariable Long id) {
 		Direcciones direccion = null;
 		Map<String,Object> response = new HashMap<>();
 		
@@ -96,5 +96,45 @@ public class DireccionesRestController {
 		return new ResponseEntity<Direcciones>(direccion,HttpStatus.OK);
 	}
 	
-	// TODO PETICIONES POST, PUT, DELETE
+	/*@PostMapping()
+	@Operation(
+    		summary = "Crea un direccion", description = "Crea un direccion",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "201",
+    						description = "¡Dirección correctamente!",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = "¡Error al crear la dirección!",
+    						content = @Content())
+    		})
+	public ResponseEntity<?> create(@RequestBody Direcciones direccion, BindingResult result){
+		Direcciones nuevaDireccion = null;
+		Map<String,Object> response = new HashMap<>();
+		
+		if(result.hasErrors()) {
+			List<String> errors = result.getFieldErrors()
+					.stream()
+					.map(err -> "El campo '" + err.getField() +"' "+ err.getDefaultMessage())
+					.collect(Collectors.toList());
+			
+			response.put("errors", errors);
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+		}
+		
+		try {
+			nuevaDireccion = direccionesService.save(direccion);
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put("mensaje", "Error al conectar con la base de datos");
+			response.put("error", e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		response.put("mensaje", "La direccion se ha insertado correctamente");
+		response.put("direccion", nuevaDireccion);
+		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+	}*/
+	
 }

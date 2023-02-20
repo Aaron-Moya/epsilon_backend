@@ -9,4 +9,5 @@ import io.swagger.v3.oas.annotations.Hidden;
 @Hidden
 public interface IUsuariosDAO extends CrudRepository<Usuarios, Long> {
 
+	Usuarios findByCorreo(String correo);
 }

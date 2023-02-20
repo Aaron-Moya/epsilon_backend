@@ -79,7 +79,7 @@ public class Direcciones implements java.io.Serializable {
 		this.ciudad = ciudad;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "direcciones")
+	@OneToMany(fetch = FetchType.EAGER, mappedBy = "direccion")
 	public Set<Usuarios> getUsuarios() {
 		return this.usuarios;
 	}

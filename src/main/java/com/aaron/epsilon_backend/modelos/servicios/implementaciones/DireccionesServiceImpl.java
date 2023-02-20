@@ -23,14 +23,14 @@ public class DireccionesServiceImpl implements IDireccionesService {
 	}
 
 	@Override
-	public Direcciones save(Direcciones direccion) {
-		return direccionesDAO.save(direccion);
-	}
-
-	@Override
 	@Transactional(readOnly = true)
 	public Direcciones findById(Long id) {
 		return direccionesDAO.findById(id).orElse(null);
+	}
+	
+	@Override
+	public Direcciones save(Direcciones direccion) {
+		return direccionesDAO.save(direccion);
 	}
 
 	@Override

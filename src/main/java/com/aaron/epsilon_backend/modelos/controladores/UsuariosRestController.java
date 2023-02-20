@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,6 +47,8 @@ public class UsuariosRestController {
 	private final IUsuariosService usuariosService;
 	@Autowired
 	private final IStorageService storageService;
+	
+	private static Logger logger = LoggerFactory.getLogger(Usuarios.class);
 	
 	@GetMapping
     @Operation(
@@ -74,7 +79,7 @@ public class UsuariosRestController {
 		return new ResponseEntity<List<Usuarios>>(listaUsuarios,HttpStatus.OK);
     }
 	
-	@GetMapping("/{id}")
+	@GetMapping("/id/{id}")
     @Operation(
     		summary = "Devuelve un usuario dado un id", description = "Devuelve un usuario dado un id",
     		responses = {
@@ -88,7 +93,7 @@ public class UsuariosRestController {
     						content = @Content()),
 					@ApiResponse(
     						responseCode = "500",
-    						description = "Error al conectar con la base de datos",
+    						description = "Error en la base de datos",
     						content = @Content())
     		})
 	public ResponseEntity<?> getById(@PathVariable Long id){
@@ -104,7 +109,87 @@ public class UsuariosRestController {
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		if(usuario==null) { // El id no existe
-			response.put("mensaje", "La categoría con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
+			response.put("mensaje", "El usuario con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<Usuarios>(usuario,HttpStatus.OK);
+	}
+	
+	@GetMapping("/correo/{correo}")
+    @Operation(
+    		summary = "Devuelve un usuario dado un email", description = "Devuelve un usuario dado un email",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "200",
+    						description = "OK",
+    						content = @Content()),
+    				@ApiResponse(
+    						responseCode = "404",
+    						description = "No se ha encontrado un usuario con ese email",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = "Error en la base de datos",
+    						content = @Content())
+    		})
+	public ResponseEntity<?> getByEmail(@PathVariable String correo){
+		Usuarios usuario = null;
+		Map<String,Object> response = new HashMap<>();
+		
+		try {
+			usuario = usuariosService.findByCorreo(correo);
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put("mensaje", "Error al conectar con la base de datos");
+			response.put("error", e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		if(usuario==null) { // El email no existe
+			response.put("mensaje", "El usuario con email: ".concat(correo.concat(" no existe en la base de datos")));
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+		}
+		
+		return new ResponseEntity<Usuarios>(usuario,HttpStatus.OK);
+	}
+	
+	@GetMapping("/login")
+    @Operation(
+    		summary = "Comprueba las credenciales de un usuario", description = "Comprueba las credenciales de un usuario",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "200",
+    						description = "OK",
+    						content = @Content()),
+    				@ApiResponse(
+    						responseCode = "404",
+    						description = "No se ha encontrado un usuario con ese email y contraseña",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = "Error en la base de datos",
+    						content = @Content())
+    		})
+	public ResponseEntity<?> comprobarCredenciales(@RequestParam String correo, @RequestParam String password){
+		Usuarios usuario = null;
+		Map<String,Object> response = new HashMap<>();
+		
+		try {
+			usuario = usuariosService.findByCorreo(correo);
+			if (usuario != null) {
+				if (!usuario.getPassword().equals(password)) { // Comprueba la contraseña
+					usuario = null; 
+				}
+			}
+			
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put("mensaje", "Error al conectar con la base de datos");
+			response.put("error", e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		if(usuario==null) { // El usuario no existe
+			response.put("mensaje", "El usuario con ese correo y contraseña no existe");
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
 		}
 		
@@ -166,4 +251,6 @@ public class UsuariosRestController {
 		response.put("usuario", nuevoUsuario);
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
 	}
+	
+	// TODO PETICION PUT
 }

@@ -4,6 +4,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -26,7 +29,7 @@ public class Usuarios implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int id;
-	private Direcciones direcciones;
+	private Direcciones direccion;
 	private String usuario;
 	private String password;
 	private String correo;
@@ -55,7 +58,7 @@ public class Usuarios implements java.io.Serializable {
 			String avatar, Set<Valoraciones> valoracionesRecibidas, Set<Ventas> ventasRealizadas, Set<Productos> productosCesta,
 			Set<Valoraciones> valoracionesDadas, Set<Productos> productosFavoritos, Set<Ventas> comprasRealizadas) {
 		this.id = id;
-		this.direcciones = direcciones;
+		this.direccion = direcciones;
 		this.usuario = usuario;
 		this.password = password;
 		this.correo = correo;
@@ -80,14 +83,15 @@ public class Usuarios implements java.io.Serializable {
 		this.id = id;
 	}
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
 	@JoinColumn(name = "id_direccion")
-	public Direcciones getDirecciones() {
-		return this.direcciones;
+	@JsonIgnoreProperties("usuarios")
+	public Direcciones getDireccion() {
+		return this.direccion;
 	}
 
-	public void setDirecciones(Direcciones direcciones) {
-		this.direcciones = direcciones;
+	public void setDireccion(Direcciones direcciones) {
+		this.direccion = direcciones;
 	}
 
 	@Column(name = "usuario", nullable = false, length = 18)
