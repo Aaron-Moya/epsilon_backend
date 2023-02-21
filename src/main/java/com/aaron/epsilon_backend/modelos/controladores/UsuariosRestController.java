@@ -1,9 +1,11 @@
 package com.aaron.epsilon_backend.modelos.controladores;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import com.aaron.epsilon_backend.modelos.dto.UsuarioCrearDTO;
 import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IUsuariosService;
 import com.aaron.epsilon_backend.upload.FicherosController;
@@ -196,7 +200,7 @@ public class UsuariosRestController {
 		return new ResponseEntity<Usuarios>(usuario,HttpStatus.OK);
 	}
 	
-	@PostMapping(value = "", consumes= MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(value = "")
 	@Operation(
     		summary = "Crea un usuario", description = "Crea un usuario",
     		responses = {
@@ -210,10 +214,9 @@ public class UsuariosRestController {
     						content = @Content())
     		})
 	public ResponseEntity<?> create(
-			@RequestPart("usuario") @Parameter(schema = @Schema(type = "string", format = "binary")) Usuarios usuario,
-			@RequestPart("file") MultipartFile file, 
+			@RequestPart UsuarioCrearDTO usuario, @RequestPart(required = false) MultipartFile file,
 			BindingResult result){
-		Usuarios nuevoUsuario = null;
+		Usuarios nuevoUsuario = new Usuarios();
 		Map<String,Object> response = new HashMap<>();
 		
 		if(result.hasErrors()) {
@@ -228,7 +231,7 @@ public class UsuariosRestController {
 		
 		// Almacenamos el fichero y obtenemos su URL
 		String urlImagen = null;
-		if (!file.isEmpty()) {
+		if (Objects.nonNull(file) && !file.isEmpty()) {
 			String imagen = storageService.store(file);
 			urlImagen = MvcUriComponentsBuilder
 							// El segundo argumento es necesario solo cuando queremos obtener la imagen
@@ -236,10 +239,17 @@ public class UsuariosRestController {
 							.fromMethodName(FicherosController.class, "serveFile", imagen, null)  
 							.build().toUriString();
 		}
+		else {
+			urlImagen = "http://localhost:8080/files/default.png";
+		}
 		
 		try {
-			usuario.setAvatar(urlImagen);
-			nuevoUsuario = usuariosService.save(usuario);
+			nuevoUsuario.setUsuario(usuario.getUsuario());
+			nuevoUsuario.setPassword(usuario.getPassword());
+			nuevoUsuario.setCorreo(usuario.getCorreo());
+			nuevoUsuario.setAvatar(urlImagen);
+			nuevoUsuario.setFechaCreacion(new Date());
+			nuevoUsuario = usuariosService.save(nuevoUsuario);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put("mensaje", "Error al conectar con la base de datos");
 			response.put("error", e.getMessage().concat(":")

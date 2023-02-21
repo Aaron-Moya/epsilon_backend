@@ -1,5 +1,6 @@
 package com.aaron.epsilon_backend;
 
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -23,4 +24,5 @@ public class EpsilonBackendApplication {
         return new OpenAPI().info(new Info().title("Epsilon API REST Doc")
         		.version("1.0.0").description("Epsilon API REST Doc"));
     }
+    
 }	
