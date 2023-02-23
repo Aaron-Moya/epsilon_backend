@@ -33,6 +33,7 @@ import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IUsuariosService;
 import com.aaron.epsilon_backend.upload.FicherosController;
 import com.aaron.epsilon_backend.upload.IStorageService;
+import com.aaron.epsilon_backend.utilidades.Utilidades;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -181,7 +182,7 @@ public class UsuariosRestController {
 		try {
 			usuario = usuariosService.findByCorreo(correo);
 			if (usuario != null) {
-				if (!usuario.getPassword().equals(password)) { // Comprueba la contraseña
+				if (!usuario.getPassword().equals(Utilidades.encriptarSHA256(password))) { // Comprueba la contraseña
 					usuario = null; 
 				}
 			}
@@ -245,7 +246,7 @@ public class UsuariosRestController {
 		
 		try {
 			nuevoUsuario.setUsuario(usuario.getUsuario());
-			nuevoUsuario.setPassword(usuario.getPassword());
+			nuevoUsuario.setPassword(Utilidades.encriptarSHA256(usuario.getPassword()));
 			nuevoUsuario.setCorreo(usuario.getCorreo());
 			nuevoUsuario.setAvatar(urlImagen);
 			nuevoUsuario.setFechaCreacion(new Date());
