@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,8 +24,8 @@ public class EmailsRestController {
     		summary = "Envia un correo al email que se le pasa por parámetro", 
     		description = "Envia un correo al email que se le pasa por parámetro"
     		)
-	@GetMapping("/{from}/{text}/{subject}")
-    public void crearEmail(@PathVariable String email, @PathVariable String texto, @PathVariable String asunto) {
+	@GetMapping("/registro")
+    public void crearEmail(@RequestParam String email, @RequestParam String texto, @RequestParam String asunto) {
         SimpleMailMessage mensaje = new SimpleMailMessage();
         //mensaje.setFrom(from);
         mensaje.setTo(email);
