@@ -3,6 +3,8 @@ package com.aaron.epsilon_backend.modelos.servicios.implementaciones;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.aaron.epsilon_backend.modelos.dao.IProductosDAO;
@@ -16,8 +18,8 @@ public class ProductosServiceImpl implements IProductosService {
 	private IProductosDAO productosDAO;
 	
 	@Override
-	public List<Productos> findAll() {
-		return (List<Productos>) productosDAO.findAll();
+	public Page<Productos> findAll(Pageable page) {
+		return (Page<Productos>) productosDAO.findAll(page);
 	}
 
 	@Override

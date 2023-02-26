@@ -7,8 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -22,12 +26,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import com.aaron.epsilon_backend.modelos.dto.ProductoDTO;
 import com.aaron.epsilon_backend.modelos.entidades.Productos;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IProductosService;
 import com.aaron.epsilon_backend.upload.FicherosController;
 import com.aaron.epsilon_backend.upload.IStorageService;
+import com.aaron.epsilon_backend.utilidades.ConverterProducto;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
@@ -43,6 +51,7 @@ public class ProductosRestController {
 	
 	@GetMapping
     @Operation(
+    		
     		summary = "Devuelve todos los productos", description = "Devuelve todos los productos",
     		responses = {
     				@ApiResponse(
@@ -54,12 +63,16 @@ public class ProductosRestController {
     						description = "Error al conectar con la base de datos",
     						content = @Content())
     		})
-    public ResponseEntity<?> getAll() {
-    	List<Productos> listaProductos = new ArrayList<>();
+	@PageableAsQueryParam
+    public ResponseEntity<?> getAll(Pageable page) {
+    	Page<Productos> listaProductos = null;
+    	List<ProductoDTO> listaProductosDTO = null;
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
-			listaProductos = productosService.findAll();
+			listaProductos = productosService.findAll(page);
+			listaProductosDTO = listaProductos.getContent().stream()
+					.map(ConverterProducto::convertirProducto).toList();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put("mensaje", "Error al conectar con la base de datos");
 			response.put("error", e.getMessage().concat(":")
@@ -67,7 +80,7 @@ public class ProductosRestController {
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return new ResponseEntity<List<Productos>>(listaProductos,HttpStatus.OK);
+		return new ResponseEntity<Page<ProductoDTO>>(new PageImpl<>(listaProductosDTO, page, listaProductos.getTotalElements()) ,HttpStatus.OK);
     }
 	
 	@GetMapping("/id/{id}")
