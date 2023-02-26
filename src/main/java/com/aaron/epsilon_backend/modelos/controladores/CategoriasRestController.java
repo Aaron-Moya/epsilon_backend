@@ -21,10 +21,12 @@ import com.aaron.epsilon_backend.modelos.servicios.interfaces.ICategoriasService
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @CrossOrigin(origins = {"*"})
 @RestController
 @RequestMapping("/api/categorias")
+@SecurityRequirement(name = "Bearer Authentication")
 public class CategoriasRestController {
 
 	@Autowired

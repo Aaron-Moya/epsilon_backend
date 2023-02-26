@@ -171,30 +171,17 @@ public class UsuariosRestController {
     						description = "Error en la base de datos",
     						content = @Content())
     		})
-	public ResponseEntity<?> comprobarCredenciales(@RequestParam String correo, @RequestParam String password){
+	public Usuarios comprobarCredenciales(@RequestParam String correo, @RequestParam String password){
 		Usuarios usuario = null;
 		Map<String,Object> response = new HashMap<>();
 		
-		try {
-			usuario = usuariosService.findByCorreo(correo);
-			if (usuario != null) {
-				if (!usuario.getPassword().equals(Utilidades.encriptarSHA256(password))) { // Comprueba la contraseña
-					usuario = null; 
-				}
+		usuario = usuariosService.findByCorreo(correo);
+		if (usuario != null) {
+			if (!usuario.getPassword().equals(Utilidades.encriptarSHA256(password))) { // Comprueba la contraseña
+				usuario = null; 
 			}
-			
-		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
-					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		if(usuario==null) { // El usuario no existe
-			response.put("mensaje", "El usuario con ese correo y contraseña no existe");
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
-		}
-		
-		return new ResponseEntity<Usuarios>(usuario,HttpStatus.OK);
+		return usuario;
 	}
 	
 	@PostMapping(value = "")

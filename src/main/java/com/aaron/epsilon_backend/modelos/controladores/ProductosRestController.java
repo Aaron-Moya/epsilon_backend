@@ -1,6 +1,5 @@
 package com.aaron.epsilon_backend.modelos.controladores;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +33,6 @@ import com.aaron.epsilon_backend.upload.IStorageService;
 import com.aaron.epsilon_backend.utilidades.ConverterProducto;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
