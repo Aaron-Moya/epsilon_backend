@@ -20,8 +20,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class WebSecurityConfig {
 
 	String[] urls = new String[] { 
-			"", "/auth/login", "/api/registro", "/api/usuarios/id/**", 
-			"/api/email", "/api/productos", "/api/productos/id/**",
+			"", "/auth/login", "/api/usuarios/registro", "/api/usuarios/id/**" , "/api/usuarios/correo/**", 
+			"/api/email/**", "/api/productos", "/api/productos/id/**",
 			"/files/**", "/v3/**", "/swagger-ui.html", "/swagger-ui/**" 
 		};
 

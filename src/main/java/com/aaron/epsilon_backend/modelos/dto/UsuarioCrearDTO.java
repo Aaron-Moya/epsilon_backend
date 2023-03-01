@@ -1,8 +1,9 @@
 package com.aaron.epsilon_backend.modelos.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
+@Data @NoArgsConstructor
 public class UsuarioCrearDTO {
 
 	private String usuario;

@@ -193,7 +193,7 @@ public class UsuariosRestController {
 		return usuario;
 	}
 	
-	@PostMapping(value = "")
+	@PostMapping(value = "/registro")
 	@Operation(
     		summary = "Crea un usuario", description = "Crea un usuario",
     		responses = {
