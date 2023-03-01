@@ -1,6 +1,6 @@
 package com.aaron.epsilon_backend.utilidades;
 
-import com.aaron.epsilon_backend.auth.dto.DireccionDto;
+import com.aaron.epsilon_backend.modelos.dto.DireccionDto;
 import com.aaron.epsilon_backend.modelos.entidades.Direcciones;
 
 public class ConverterDirecciones {

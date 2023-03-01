@@ -1,6 +1,5 @@
 package com.aaron.epsilon_backend.modelos.servicios.implementaciones;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,8 +28,7 @@ public class ProductosServiceImpl implements IProductosService {
 
 	@Override
 	public Productos findById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return productosDAO.findById(id).orElse(null);
 	}
 
 	@Override

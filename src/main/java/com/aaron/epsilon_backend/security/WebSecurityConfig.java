@@ -19,7 +19,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Component
 public class WebSecurityConfig {
 
-	String[] urls = new String[] { "", "/auth/login", "/api/registro", "/api/productos", "/files/**", "/v3/**", "/swagger-ui.html", "/swagger-ui/**" };
+	String[] urls = new String[] { 
+			"", "/auth/login", "/api/registro", "/api/usuarios/id/**", 
+			"/api/email", "/api/productos", "/api/productos/id/**",
+			"/files/**", "/v3/**", "/swagger-ui.html", "/swagger-ui/**" 
+		};
 
 	@Bean
 	protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

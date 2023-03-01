@@ -41,6 +41,7 @@ public class Usuarios implements java.io.Serializable {
 	private Set<Valoraciones> valoracionesDadas = new HashSet<Valoraciones>(0);
 	private Set<Productos> productosFavoritos = new HashSet<Productos>(0);
 	private Set<Ventas>  comprasRealizadas = new HashSet<Ventas>(0);
+	private Set<Productos> productos = new HashSet<Productos>(0);
 
 	public Usuarios() {
 	}
@@ -56,7 +57,7 @@ public class Usuarios implements java.io.Serializable {
 
 	public Usuarios(int id, Direcciones direcciones, String usuario, String password, String correo, Date fechaCreacion,
 			String avatar, Set<Valoraciones> valoracionesRecibidas, Set<Ventas> ventasRealizadas, Set<Productos> productosCesta,
-			Set<Valoraciones> valoracionesDadas, Set<Productos> productosFavoritos, Set<Ventas> comprasRealizadas) {
+			Set<Valoraciones> valoracionesDadas, Set<Productos> productosFavoritos, Set<Ventas> comprasRealizadas, Set<Productos> productos) {
 		this.id = id;
 		this.direccion = direcciones;
 		this.usuario = usuario;
@@ -70,6 +71,7 @@ public class Usuarios implements java.io.Serializable {
 		this.valoracionesDadas = valoracionesDadas;
 		this.productosFavoritos = productosFavoritos;
 		this.comprasRealizadas = comprasRealizadas;
+		this.productos = productos;
 	}
 
 	@Id
@@ -198,6 +200,15 @@ public class Usuarios implements java.io.Serializable {
 
 	public void setComprasRealizadas(Set<Ventas> ventas) {
 		this.comprasRealizadas = ventas;
+	}
+	
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarios")
+	public Set<Productos> getProductos() {
+		return this.productos;
+	}
+
+	public void setProductos(Set<Productos> productos) {
+		this.productos = productos;
 	}
 
 }

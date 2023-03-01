@@ -1,4 +1,4 @@
-package com.aaron.epsilon_backend.auth.dto;
+package com.aaron.epsilon_backend.modelos.dto;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -9,7 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data @NoArgsConstructor
-public class RespuestaTokenDto implements Serializable {
+public class UsuarioDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -19,5 +19,4 @@ public class RespuestaTokenDto implements Serializable {
 	private String correo;
 	private Date fechaCreacion;
 	private String avatar;
-	private String accessToken;
 }

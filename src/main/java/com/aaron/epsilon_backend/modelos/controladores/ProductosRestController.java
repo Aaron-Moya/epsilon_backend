@@ -99,6 +99,7 @@ public class ProductosRestController {
     		})
 	public ResponseEntity<?> getById(@PathVariable Long id){
 		Productos producto = null;
+		ProductoDTO productoDto = null;
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
@@ -113,8 +114,8 @@ public class ProductosRestController {
 			response.put("mensaje", "El producto con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
 		}
-		
-		return new ResponseEntity<Productos>(producto,HttpStatus.OK);
+		productoDto = ConverterProducto.convertirProducto(producto);
+		return new ResponseEntity<ProductoDTO>(productoDto,HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "")

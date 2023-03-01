@@ -1,4 +1,4 @@
-package com.aaron.epsilon_backend.auth.dto;
+package com.aaron.epsilon_backend.modelos.dto;
 
 import java.io.Serializable;
 

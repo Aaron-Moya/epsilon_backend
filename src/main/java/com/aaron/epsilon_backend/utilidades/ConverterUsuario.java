@@ -3,7 +3,8 @@ package com.aaron.epsilon_backend.utilidades;
 import java.util.Date;
 import java.util.Objects;
 
-import com.aaron.epsilon_backend.auth.dto.RespuestaTokenDto;
+import com.aaron.epsilon_backend.modelos.dto.UsuarioDTO;
+import com.aaron.epsilon_backend.modelos.dto.UsuarioLoginDTO;
 import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -14,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Data @NoArgsConstructor
 public class ConverterUsuario {
 
-	public static RespuestaTokenDto convertirUsuario(Usuarios user) {
+	public static UsuarioLoginDTO convertirUsuarioLogin(Usuarios user) {
 		Algorithm algorithm = Algorithm.HMAC256("token101");
-        RespuestaTokenDto respuestaTokenDto = new RespuestaTokenDto();
+        UsuarioLoginDTO respuestaTokenDto = new UsuarioLoginDTO();
         respuestaTokenDto.setId(user.getId());
         respuestaTokenDto.setCorreo(user.getCorreo());
         respuestaTokenDto.setUsuario(user.getUsuario());
@@ -33,5 +34,18 @@ public class ConverterUsuario {
         respuestaTokenDto.setAccessToken(token);
         
         return respuestaTokenDto;
+	}
+	
+	public static UsuarioDTO convertirUsuario(Usuarios user) {
+		UsuarioDTO usuarioDto = new UsuarioDTO();
+		usuarioDto.setId(user.getId());
+		usuarioDto.setCorreo(user.getCorreo());
+		usuarioDto.setUsuario(user.getUsuario());
+		usuarioDto.setFechaCreacion(user.getFechaCreacion());
+		usuarioDto.setAvatar(user.getAvatar());
+        if (Objects.nonNull(user.getDireccion()))
+        	usuarioDto.setDireccion(ConverterDirecciones.convertirDireccion(user.getDireccion()));
+        
+        return usuarioDto;
 	}
 }

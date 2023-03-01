@@ -1,13 +1,11 @@
 package com.aaron.epsilon_backend.modelos.dto;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Data
-public class ProductoDTO {
+@Data @NoArgsConstructor
+public class CategoriaDTO {
 
 	private int id;
 	private String nombre;
-	private float precio;
-	private String estado;
-	private String imagen;
 }

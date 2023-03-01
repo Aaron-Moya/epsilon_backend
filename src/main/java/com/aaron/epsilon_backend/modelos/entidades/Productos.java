@@ -32,6 +32,7 @@ public class Productos implements java.io.Serializable {
 	
 	private int id;
 	private Categorias categorias;
+	private Usuarios usuarios;
 	private String nombre;
 	private String descripcion;
 	private float precio;
@@ -46,10 +47,11 @@ public class Productos implements java.io.Serializable {
 	public Productos() {
 	}
 
-	public Productos(int id, Categorias categorias, String nombre, String descripcion, float precio, int stock,
+	public Productos(int id, Categorias categorias, Usuarios usuarios, String nombre, String descripcion, float precio, int stock,
 			String estado, Date fechaCreacion, String imagen) {
 		this.id = id;
 		this.categorias = categorias;
+		this.usuarios = usuarios;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.precio = precio;
@@ -59,11 +61,12 @@ public class Productos implements java.io.Serializable {
 		this.imagen = imagen;
 	}
 
-	public Productos(int id, Categorias categorias, String nombre, String descripcion, float precio, int stock,
+	public Productos(int id, Categorias categorias, Usuarios usuarios, String nombre, String descripcion, float precio, int stock,
 			String estado, Date fechaCreacion, String imagen, 
 			Set<Usuarios> usuariosCesta, Set<VentasProductos> ventasProductos, Set<Usuarios> usuariosFavorito) {
 		this.id = id;
 		this.categorias = categorias;
+		this.usuarios = usuarios;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.precio = precio;
@@ -96,6 +99,17 @@ public class Productos implements java.io.Serializable {
 
 	public void setCategorias(Categorias categorias) {
 		this.categorias = categorias;
+	}
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "id_usuario", nullable = false)
+	@JsonIgnoreProperties("productos")
+	public Usuarios getUsuarios() {
+		return this.usuarios;
+	}
+
+	public void setUsuarios(Usuarios usuarios) {
+		this.usuarios = usuarios;
 	}
 
 	@Column(name = "nombre", nullable = false)

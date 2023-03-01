@@ -15,18 +15,19 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aaron.epsilon_backend.modelos.dto.CategoriaDTO;
 import com.aaron.epsilon_backend.modelos.entidades.Categorias;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.ICategoriasService;
+import com.aaron.epsilon_backend.utilidades.ConverterCategoria;
+import com.aaron.epsilon_backend.utilidades.ConverterUsuario;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 @CrossOrigin(origins = {"*"})
 @RestController
 @RequestMapping("/api/categorias")
-@SecurityRequirement(name = "Bearer Authentication")
 public class CategoriasRestController {
 
 	@Autowired
@@ -47,10 +48,13 @@ public class CategoriasRestController {
     		})
     public ResponseEntity<?> getAll() {
     	List<Categorias> listaCategorias = new ArrayList<>();
+    	List<CategoriaDTO> listaCategoriaDtos = new ArrayList<>();
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
 			listaCategorias = categoriasService.findAll();
+			listaCategoriaDtos = listaCategorias.stream()
+					.map(ConverterCategoria::convertirCategoria).toList();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put("mensaje", "Error al conectar con la base de datos");
 			response.put("error", e.getMessage().concat(":")
@@ -58,7 +62,7 @@ public class CategoriasRestController {
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return new ResponseEntity<List<Categorias>>(listaCategorias,HttpStatus.OK);
+		return new ResponseEntity<List<CategoriaDTO>>(listaCategoriaDtos,HttpStatus.OK);
     }
     
     @GetMapping("/{id}")

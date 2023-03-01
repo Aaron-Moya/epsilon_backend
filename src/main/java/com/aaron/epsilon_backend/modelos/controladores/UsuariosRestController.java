@@ -27,10 +27,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import com.aaron.epsilon_backend.modelos.dto.UsuarioCrearDTO;
+import com.aaron.epsilon_backend.modelos.dto.UsuarioDTO;
+import com.aaron.epsilon_backend.modelos.dto.UsuarioLoginDTO;
 import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IUsuariosService;
 import com.aaron.epsilon_backend.upload.FicherosController;
 import com.aaron.epsilon_backend.upload.IStorageService;
+import com.aaron.epsilon_backend.utilidades.ConverterProducto;
+import com.aaron.epsilon_backend.utilidades.ConverterUsuario;
 import com.aaron.epsilon_backend.utilidades.Utilidades;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,10 +70,13 @@ public class UsuariosRestController {
     		})
     public ResponseEntity<?> getAll() {
     	List<Usuarios> listaUsuarios = new ArrayList<>();
+    	List<UsuarioDTO> listaUsuariosDtos = new ArrayList<>();
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
 			listaUsuarios = usuariosService.findAll();
+			listaUsuariosDtos = listaUsuarios.stream()
+					.map(ConverterUsuario::convertirUsuario).toList();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put("mensaje", "Error al conectar con la base de datos");
 			response.put("error", e.getMessage().concat(":")
@@ -77,7 +84,7 @@ public class UsuariosRestController {
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return new ResponseEntity<List<Usuarios>>(listaUsuarios,HttpStatus.OK);
+		return new ResponseEntity<List<UsuarioDTO>>(listaUsuariosDtos,HttpStatus.OK);
     }
 	
 	@GetMapping("/id/{id}")
@@ -99,10 +106,12 @@ public class UsuariosRestController {
     		})
 	public ResponseEntity<?> getById(@PathVariable Long id){
 		Usuarios usuario = null;
+		UsuarioLoginDTO usuarioDTO = null;
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
 			usuario = usuariosService.findById(id);
+			usuarioDTO = ConverterUsuario.convertirUsuarioLogin(usuario);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put("mensaje", "Error al conectar con la base de datos");
 			response.put("error", e.getMessage().concat(":")
@@ -114,7 +123,7 @@ public class UsuariosRestController {
 			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
 		}
 		
-		return new ResponseEntity<Usuarios>(usuario,HttpStatus.OK);
+		return new ResponseEntity<>(usuarioDTO,HttpStatus.OK);
 	}
 	
 	@GetMapping("/correo/{correo}")
