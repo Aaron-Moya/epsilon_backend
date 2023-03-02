@@ -9,6 +9,9 @@ public class ConverterProducto {
 		ProductoDTO productoDTO = new ProductoDTO();
 		productoDTO.setId(producto.getId());
 		productoDTO.setNombre(producto.getNombre());
+		productoDTO.setDescripcion(producto.getDescripcion());
+		productoDTO.setFechaCreacion(producto.getFechaCreacion());
+		productoDTO.setStock(producto.getStock());
 		productoDTO.setEstado(producto.getEstado());
 		productoDTO.setPrecio(producto.getPrecio());
 		productoDTO.setImagen(producto.getImagen());
