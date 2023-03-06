@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -26,10 +28,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import com.aaron.epsilon_backend.modelos.dto.ProductoDTO;
 import com.aaron.epsilon_backend.modelos.dto.UsuarioCrearDTO;
 import com.aaron.epsilon_backend.modelos.dto.UsuarioDTO;
 import com.aaron.epsilon_backend.modelos.dto.UsuarioLoginDTO;
+import com.aaron.epsilon_backend.modelos.entidades.Productos;
 import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
+import com.aaron.epsilon_backend.modelos.servicios.interfaces.IProductosService;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IUsuariosService;
 import com.aaron.epsilon_backend.upload.FicherosController;
 import com.aaron.epsilon_backend.upload.IStorageService;
@@ -40,6 +45,7 @@ import com.aaron.epsilon_backend.utilidades.Utilidades;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 @CrossOrigin(origins = {"*"})
@@ -50,6 +56,8 @@ public class UsuariosRestController {
 
 	@Autowired
 	private final IUsuariosService usuariosService;
+	@Autowired
+	private final IProductosService productosService;
 	@Autowired
 	private final IStorageService storageService;
 	
@@ -193,6 +201,28 @@ public class UsuariosRestController {
 		return usuario;
 	}
 	
+	@GetMapping("/favoritos")
+	@SecurityRequirement(name = "Bearer Authentication")
+	public ResponseEntity<?> getProductosFavoritos(@RequestParam long idUsuario) {
+		Usuarios usuario = usuariosService.findById(idUsuario);
+    	Set<Productos> listaProductos = null;
+    	List<ProductoDTO> listaProductosDTO = new ArrayList<>();
+		Map<String,Object> response = new HashMap<>();
+		
+		try {
+			listaProductos = usuario.getProductosFavoritos();
+			listaProductosDTO = listaProductos.stream()
+					.map(ConverterProducto::convertirProducto).toList();
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put("mensaje", "Error al conectar con la base de datos");
+			response.put("error", e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return new ResponseEntity<List<ProductoDTO>>(listaProductosDTO,HttpStatus.OK);
+    }
+	
 	@PostMapping(value = "/registro")
 	@Operation(
     		summary = "Crea un usuario", description = "Crea un usuario",
@@ -255,6 +285,25 @@ public class UsuariosRestController {
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
 	}
 	
-	
-	// TODO PETICION PUT
+	@PutMapping(value = "/favorito")
+	@SecurityRequirement(name = "Bearer Authentication")
+	public ResponseEntity<?> addProductoFavorito(@RequestParam long idUsuario, 
+			@RequestParam long idProducto){
+		Usuarios usuarioActualizado = usuariosService.findById(idUsuario);
+		Productos producto = productosService.findById(idProducto);
+		Map<String,Object> response = new HashMap<>();
+		
+		try {
+			usuarioActualizado.getProductosFavoritos().add(producto);
+			usuarioActualizado = usuariosService.save(usuarioActualizado);
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put("mensaje", "Error al conectar con la base de datos");
+			response.put("error", e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		response.put("mensaje", "Se ha añadido correctamente le producto a favoritos");
+		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+	}
 }

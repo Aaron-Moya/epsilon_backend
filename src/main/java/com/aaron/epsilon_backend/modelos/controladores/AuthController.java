@@ -32,16 +32,4 @@ public class AuthController {
         else
         	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("usuario y/o contraseña incorrectos");
     }
-
-    /*@PostMapping("/registro")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<Void> registro(@RequestBody UsuarioInsertDto userDto) {
-        boolean resultado = usuariosService.insert(new Usuario(userDto));
-        System.out.println(resultado);
-        if(resultado) {
-			return ResponseEntity.status(HttpStatus.CREATED).body(null); 
-		}else {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-		}
-    }*/
 }
