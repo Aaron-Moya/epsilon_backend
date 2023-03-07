@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -304,6 +305,28 @@ public class UsuariosRestController {
 		}
 		
 		response.put("mensaje", "Se ha añadido correctamente le producto a favoritos");
+		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+	}
+	
+	@DeleteMapping(value = "/favorito")
+	@SecurityRequirement(name = "Bearer Authentication")
+	public ResponseEntity<?> deleteProductoFavorito(@RequestParam long idUsuario, 
+			@RequestParam long idProducto){
+		Usuarios usuarioActualizado = usuariosService.findById(idUsuario);
+		Productos producto = productosService.findById(idProducto);
+		Map<String,Object> response = new HashMap<>();
+		
+		try {
+			usuarioActualizado.getProductosFavoritos().remove(producto);
+			usuarioActualizado = usuariosService.save(usuarioActualizado);
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put("mensaje", "Error al conectar con la base de datos");
+			response.put("error", e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		response.put("mensaje", "Se ha eliminado el producto de favoritos correctamente!");
 		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
 	}
 }
