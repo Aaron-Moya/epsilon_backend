@@ -40,9 +40,9 @@ public class Productos implements java.io.Serializable {
 	private String estado;
 	private Date fechaCreacion;
 	private String imagen;
-	private Set<Usuarios> usuariosCesta = new HashSet<Usuarios>(0);
-	private Set<VentasProductos> ventasProductos = new HashSet<VentasProductos>(0);
-	private Set<Usuarios> usuariosFavorito = new HashSet<Usuarios>(0);
+	private Set<Usuarios> usuariosCesta = new HashSet<>(0);
+	private Set<VentasProductos> ventasProductos = new HashSet<>(0);
+	private Set<Usuarios> usuariosFavorito = new HashSet<>(0);
 
 	public Productos() {
 	}
@@ -188,7 +188,7 @@ public class Productos implements java.io.Serializable {
 		this.usuariosCesta = usuariosCesta;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "productos")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "producto")
 	public Set<VentasProductos> getVentasProductos() {
 		return this.ventasProductos;
 	}

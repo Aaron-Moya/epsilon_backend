@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +41,7 @@ import com.aaron.epsilon_backend.upload.IStorageService;
 import com.aaron.epsilon_backend.utilidades.ConverterProducto;
 import com.aaron.epsilon_backend.utilidades.ConverterUsuario;
 import com.aaron.epsilon_backend.utilidades.Utilidades;
+import com.aaron.epsilon_backend.utilidades.Const;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -62,7 +62,8 @@ public class UsuariosRestController {
 	@Autowired
 	private final IStorageService storageService;
 	
-	private static Logger logger = LoggerFactory.getLogger(Usuarios.class);
+	@SuppressWarnings("unused")
+	private static Logger logger = LoggerFactory.getLogger(UsuariosRestController.class);
 	
 	@GetMapping
     @Operation(
@@ -87,13 +88,13 @@ public class UsuariosRestController {
 			listaUsuariosDtos = listaUsuarios.stream()
 					.map(ConverterUsuario::convertirUsuario).toList();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return new ResponseEntity<List<UsuarioDTO>>(listaUsuariosDtos,HttpStatus.OK);
+		return new ResponseEntity<>(listaUsuariosDtos,HttpStatus.OK);
     }
 	
 	@GetMapping("/id/{id}")
@@ -122,14 +123,14 @@ public class UsuariosRestController {
 			usuario = usuariosService.findById(id);
 			usuarioDTO = ConverterUsuario.convertirUsuarioLogin(usuario);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		if(usuario==null) { // El id no existe
-			response.put("mensaje", "El usuario con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+			response.put(Const.MENSAJE, "El usuario con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
+			return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
 		}
 		
 		return new ResponseEntity<>(usuarioDTO,HttpStatus.OK);
@@ -159,17 +160,17 @@ public class UsuariosRestController {
 		try {
 			usuario = usuariosService.findByCorreo(correo);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		if(usuario==null) { // El email no existe
-			response.put("mensaje", "El usuario con email: ".concat(correo.concat(" no existe en la base de datos")));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+			response.put(Const.MENSAJE, "El usuario con email: ".concat(correo.concat(" no existe en la base de datos")));
+			return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
 		}
 		
-		return new ResponseEntity<Usuarios>(usuario,HttpStatus.OK);
+		return new ResponseEntity<>(usuario,HttpStatus.OK);
 	}
 	
 	@GetMapping("/login")
@@ -190,14 +191,11 @@ public class UsuariosRestController {
     						content = @Content())
     		})
 	public Usuarios comprobarCredenciales(@RequestParam String correo, @RequestParam String password){
-		Usuarios usuario = null;
-		Map<String,Object> response = new HashMap<>();
-		
+		Usuarios usuario = null;		
 		usuario = usuariosService.findByCorreo(correo);
-		if (usuario != null) {
-			if (!usuario.getPassword().equals(Utilidades.encriptarSHA256(password))) { // Comprueba la contraseña
+		
+		if (usuario != null && (!usuario.getPassword().equals(Utilidades.encriptarSHA256(password)))) { // Comprueba la contraseña
 				usuario = null; 
-			}
 		}
 		return usuario;
 	}
@@ -215,13 +213,13 @@ public class UsuariosRestController {
 			listaProductosDTO = listaProductos.stream()
 					.map(ConverterProducto::convertirProducto).toList();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return new ResponseEntity<List<ProductoDTO>>(listaProductosDTO,HttpStatus.OK);
+		return new ResponseEntity<>(listaProductosDTO,HttpStatus.OK);
     }
 	
 	@PostMapping(value = "/registro")
@@ -247,10 +245,10 @@ public class UsuariosRestController {
 			List<String> errors = result.getFieldErrors()
 					.stream()
 					.map(err -> "El campo '" + err.getField() +"' "+ err.getDefaultMessage())
-					.collect(Collectors.toList());
+					.toList();
 			
 			response.put("errors", errors);
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 		
 		// Almacenamos el fichero y obtenemos su URL
@@ -275,18 +273,30 @@ public class UsuariosRestController {
 			nuevoUsuario.setFechaCreacion(new Date());
 			nuevoUsuario = usuariosService.save(nuevoUsuario);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		response.put("mensaje", "El usuario se ha insertado correctamente");
+		response.put(Const.MENSAJE, "El usuario se ha insertado correctamente");
 		response.put("usuario", nuevoUsuario);
-		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+		return new ResponseEntity<>(response,HttpStatus.CREATED);
 	}
 	
 	@PutMapping(value = "/favorito")
+	@Operation(
+    		summary = "Añade un producto a favoritos", description = "Añade un producto a favoritos",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "201",
+    						description = "¡Producto añadido a favoritos!",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = "¡Error al añadir el producto a favoritos!",
+    						content = @Content())
+    		})
 	@SecurityRequirement(name = "Bearer Authentication")
 	public ResponseEntity<?> addProductoFavorito(@RequestParam long idUsuario, 
 			@RequestParam long idProducto){
@@ -296,19 +306,31 @@ public class UsuariosRestController {
 		
 		try {
 			usuarioActualizado.getProductosFavoritos().add(producto);
-			usuarioActualizado = usuariosService.save(usuarioActualizado);
+			usuariosService.save(usuarioActualizado);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		response.put("mensaje", "Se ha añadido correctamente le producto a favoritos");
-		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "/favorito")
+	@Operation(
+    		summary = "Elimina un producto de favoritos", description = "Elimina un producto de favoritos",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "201",
+    						description = "¡Producto eliminado de favoritos!",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = "¡Error al elimiar el producto de favoritos!",
+    						content = @Content())
+    		})
 	@SecurityRequirement(name = "Bearer Authentication")
 	public ResponseEntity<?> deleteProductoFavorito(@RequestParam long idUsuario, 
 			@RequestParam long idProducto){
@@ -318,15 +340,15 @@ public class UsuariosRestController {
 		
 		try {
 			usuarioActualizado.getProductosFavoritos().remove(producto);
-			usuarioActualizado = usuariosService.save(usuarioActualizado);
+			usuariosService.save(usuarioActualizado);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		response.put("mensaje", "Se ha eliminado el producto de favoritos correctamente!");
-		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+		response.put(Const.MENSAJE, "Se ha eliminado el producto de favoritos correctamente!");
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 }

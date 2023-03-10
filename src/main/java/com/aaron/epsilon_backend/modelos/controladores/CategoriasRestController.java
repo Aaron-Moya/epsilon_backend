@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.aaron.epsilon_backend.modelos.dto.CategoriaDTO;
 import com.aaron.epsilon_backend.modelos.entidades.Categorias;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.ICategoriasService;
+import com.aaron.epsilon_backend.utilidades.Const;
 import com.aaron.epsilon_backend.utilidades.ConverterCategoria;
-import com.aaron.epsilon_backend.utilidades.ConverterUsuario;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -56,13 +56,13 @@ public class CategoriasRestController {
 			listaCategoriaDtos = listaCategorias.stream()
 					.map(ConverterCategoria::convertirCategoria).toList();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return new ResponseEntity<List<CategoriaDTO>>(listaCategoriaDtos,HttpStatus.OK);
+		return new ResponseEntity<>(listaCategoriaDtos,HttpStatus.OK);
     }
     
     @GetMapping("/{id}")
@@ -89,16 +89,16 @@ public class CategoriasRestController {
 		try {
 			categoria = categoriasService.findById(id);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		if(categoria==null) { // El id no existe
 			response.put("mensaje", "La categoría con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
 		}
 		
-		return new ResponseEntity<Categorias>(categoria,HttpStatus.OK);
+		return new ResponseEntity<>(categoria,HttpStatus.OK);
 	}
 }

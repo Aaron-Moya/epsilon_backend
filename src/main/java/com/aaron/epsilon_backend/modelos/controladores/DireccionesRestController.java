@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aaron.epsilon_backend.modelos.entidades.Direcciones;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IDireccionesService;
+import com.aaron.epsilon_backend.utilidades.Const;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -50,13 +51,13 @@ public class DireccionesRestController {
 		try {
 			listaDirecciones = direccionesService.findAll();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return new ResponseEntity<List<Direcciones>>(listaDirecciones,HttpStatus.OK);
+		return new ResponseEntity<>(listaDirecciones,HttpStatus.OK);
     }
 	
 	@GetMapping("/{id}")
@@ -86,14 +87,14 @@ public class DireccionesRestController {
 			response.put("mensaje", "Error al conectar con la base de datos");
 			response.put("error", e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		if(direccion==null) { // El id no existe
 			response.put("mensaje", "La dirección con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
 		}
 		
-		return new ResponseEntity<Direcciones>(direccion,HttpStatus.OK);
+		return new ResponseEntity<>(direccion,HttpStatus.OK);
 	}
 	
 	/*@PostMapping()

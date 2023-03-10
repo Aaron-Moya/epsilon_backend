@@ -2,9 +2,6 @@ package com.aaron.epsilon_backend.modelos.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.aaron.epsilon_backend.modelos.entidades.Direcciones;
-
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

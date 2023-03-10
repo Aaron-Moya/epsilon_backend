@@ -17,6 +17,8 @@ import jakarta.persistence.Table;
 @Table(name = "valoraciones")
 public class Valoraciones implements java.io.Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private int id;
 	private Usuarios usuarioValorado;
 	private Usuarios usuarioValorador;

@@ -20,7 +20,7 @@ public class Categorias implements java.io.Serializable {
 	
 	private int id;
 	private String nombre;
-	private Set<Productos> productos = new HashSet<Productos>(0);
+	private Set<Productos> productos = new HashSet<>(0);
 
 	public Categorias() {
 	}

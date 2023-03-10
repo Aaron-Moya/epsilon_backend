@@ -35,13 +35,13 @@ public class Usuarios implements java.io.Serializable {
 	private String correo;
 	private Date fechaCreacion;
 	private String avatar;
-	private Set<Valoraciones> valoracionesRecibidas = new HashSet<Valoraciones>(0);
-	private Set<Ventas> ventasRealizadas = new HashSet<Ventas>(0);
-	private Set<Productos> productosCesta = new HashSet<Productos>(0);
-	private Set<Valoraciones> valoracionesDadas = new HashSet<Valoraciones>(0);
-	private Set<Productos> productosFavoritos = new HashSet<Productos>(0);
-	private Set<Ventas>  comprasRealizadas = new HashSet<Ventas>(0);
-	private Set<Productos> productos = new HashSet<Productos>(0);
+	private Set<Valoraciones> valoracionesRecibidas = new HashSet<>(0);
+	private Set<Ventas> ventasRealizadas = new HashSet<>(0);
+	private Set<Productos> productosCesta = new HashSet<>(0);
+	private Set<Valoraciones> valoracionesDadas = new HashSet<>(0);
+	private Set<Productos> productosFavoritos = new HashSet<>(0);
+	private Set<Ventas>  comprasRealizadas = new HashSet<>(0);
+	private Set<Productos> productos = new HashSet<>(0);
 
 	public Usuarios() {
 	}

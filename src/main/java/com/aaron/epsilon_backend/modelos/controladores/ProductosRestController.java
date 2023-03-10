@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,7 @@ import com.aaron.epsilon_backend.modelos.entidades.Productos;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IProductosService;
 import com.aaron.epsilon_backend.upload.FicherosController;
 import com.aaron.epsilon_backend.upload.IStorageService;
+import com.aaron.epsilon_backend.utilidades.Const;
 import com.aaron.epsilon_backend.utilidades.ConverterProducto;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,13 +71,13 @@ public class ProductosRestController {
 			listaProductosDTO = listaProductos.getContent().stream()
 					.map(ConverterProducto::convertirProducto).toList();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		return new ResponseEntity<Page<ProductoDTO>>(new PageImpl<>(listaProductosDTO, page, listaProductos.getTotalElements()) ,HttpStatus.OK);
+		return new ResponseEntity<>(new PageImpl<>(listaProductosDTO, page, listaProductos.getTotalElements()) ,HttpStatus.OK);
     }
 	
 	@GetMapping("/id/{id}")
@@ -105,17 +105,17 @@ public class ProductosRestController {
 		try {
 			producto = productosService.findById(id);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, "Error al conectar con la base de datos");
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		if(producto==null) { // El id no existe
-			response.put("mensaje", "El producto con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.NOT_FOUND);
+			response.put(Const.MENSAJE, "El producto con ID: ".concat(id.toString().concat(" no existe en la base de datos")));
+			return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
 		}
 		productoDto = ConverterProducto.convertirProducto(producto);
-		return new ResponseEntity<ProductoDTO>(productoDto,HttpStatus.OK);
+		return new ResponseEntity<>(productoDto,HttpStatus.OK);
 	}
 	
 	@PostMapping(value = "")
@@ -135,17 +135,17 @@ public class ProductosRestController {
 			@RequestPart Productos producto, 
 			@RequestPart MultipartFile file,
 			BindingResult result){
-		Productos nuevoProducto = new Productos();
+		Productos nuevoProducto;
 		Map<String,Object> response = new HashMap<>();
 		
 		if(result.hasErrors()) {
 			List<String> errors = result.getFieldErrors()
 					.stream()
 					.map(err -> "El campo '" + err.getField() +"' "+ err.getDefaultMessage())
-					.collect(Collectors.toList());
+					.toList();
 			
 			response.put("errors", errors);
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 		}
 		
 		// Almacenamos el fichero y obtenemos su URL
@@ -158,19 +158,18 @@ public class ProductosRestController {
 						.build().toUriString();
 		
 		try {
-			nuevoProducto = producto;
-			nuevoProducto.setImagen(urlImagen);
-			nuevoProducto.setFechaCreacion(new Date());
-			nuevoProducto = productosService.save(nuevoProducto);
+			producto.setImagen(urlImagen);
+			producto.setFechaCreacion(new Date());
+			nuevoProducto = productosService.save(producto);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String,Object>>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		response.put("mensaje", "El producto se ha insertado correctamente");
+		response.put(Const.MENSAJE, "El producto se ha insertado correctamente");
 		response.put("producto", nuevoProducto);
-		return new ResponseEntity<Map<String,Object>>(response,HttpStatus.CREATED);
+		return new ResponseEntity<>(response,HttpStatus.CREATED);
 	}
 }

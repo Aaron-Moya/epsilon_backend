@@ -26,11 +26,9 @@ public class EmailsRestController {
 	@GetMapping("/registro")
     public void crearEmail(@RequestParam String email, @RequestParam String texto, @RequestParam String asunto) {
         SimpleMailMessage mensaje = new SimpleMailMessage();
-        //mensaje.setFrom(from);
         mensaje.setTo(email);
         mensaje.setText(texto);
         mensaje.setSubject(asunto);
-
         mailSender.send(mensaje);
     }
 }

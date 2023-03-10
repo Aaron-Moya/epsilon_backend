@@ -24,12 +24,14 @@ import jakarta.persistence.TemporalType;
 @Table(name = "ventas")
 public class Ventas implements java.io.Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private int id;
 	private Usuarios usuarioVendedor;
 	private Usuarios usuarioComprador;
 	private Date fechaVenta;
 	private float total;
-	private Set<VentasProductos> ventasProductos = new HashSet<VentasProductos>(0);
+	private Set<VentasProductos> ventasProductos = new HashSet<>(0);
 
 	public Ventas() {
 	}
@@ -102,7 +104,7 @@ public class Ventas implements java.io.Serializable {
 		this.total = total;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "ventas")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "venta")
 	public Set<VentasProductos> getVentasProductos() {
 		return this.ventasProductos;
 	}

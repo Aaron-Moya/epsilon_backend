@@ -20,8 +20,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 public class WebSecurityConfig {
 
 	String[] urls = new String[] { 
-			"", "/auth/login", "/api/usuarios/registro", "/api/usuarios/id/**" , "/api/usuarios/correo/**", 
-			"/api/email/**", "/api/productos", "/api/productos/id/**",
+			"", "/auth/login", "/api/usuarios/registro", 
+			"/api/usuarios/id/**", 
+			"/api/usuarios/correo/**", "/api/email/**", 
+			"/api/productos", "/api/productos/id/**",
+			"/api/categorias",
 			"/files/**", "/v3/**", "/swagger-ui.html", "/swagger-ui/**" 
 		};
 
@@ -36,10 +39,8 @@ public class WebSecurityConfig {
 	}
 
 	@Bean
-	public CorsConfigurationSource corsConfigurationSource() {
+	CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration = new CorsConfiguration();
-		// configuration.setAllowedOrigins(Arrays.asList("*")); // Si da problemas
-		// cambiar por la siguiente linea
 		configuration.setAllowedOriginPatterns(Arrays.asList("*"));
 		configuration.setAllowCredentials(true);
 		configuration.setAllowedMethods(Arrays.asList("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));

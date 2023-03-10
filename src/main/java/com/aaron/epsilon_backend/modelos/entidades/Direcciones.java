@@ -22,7 +22,7 @@ public class Direcciones implements java.io.Serializable {
 	private String calle;
 	private Integer numero;
 	private String ciudad;
-	private Set<Usuarios> usuarios = new HashSet<Usuarios>(0);
+	private Set<Usuarios> usuarios = new HashSet<>(0);
 
 	public Direcciones() {
 	}
