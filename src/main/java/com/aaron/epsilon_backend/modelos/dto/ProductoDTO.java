@@ -16,4 +16,5 @@ public class ProductoDTO {
 	private String estado;
 	private String imagen;
 	private CategoriaDTO categorias;
+	private UsuarioDTO usuarioDTO;
 }

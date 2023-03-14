@@ -13,9 +13,25 @@ public class ConverterProducto {
 		productoDTO.setFechaCreacion(producto.getFechaCreacion());
 		productoDTO.setStock(producto.getStock());
 		productoDTO.setEstado(producto.getEstado());
+		productoDTO.setUsuarioDTO(ConverterUsuario.convertirUsuario(producto.getUsuarios()));
 		productoDTO.setPrecio(producto.getPrecio());
 		productoDTO.setImagen(producto.getImagen());
 		productoDTO.setCategorias(ConverterCategoria.convertirCategoria(producto.getCategorias()));
 		return productoDTO;
+	}
+	
+	public static Productos convertirProductoDTO(ProductoDTO productoDTO) {
+		Productos producto = new Productos();
+		producto.setId(productoDTO.getId());
+		producto.setNombre(productoDTO.getNombre());
+		producto.setDescripcion(productoDTO.getDescripcion());
+		producto.setFechaCreacion(productoDTO.getFechaCreacion());
+		producto.setStock(productoDTO.getStock());
+		producto.setEstado(productoDTO.getEstado());
+		producto.setUsuarios(ConverterUsuario.convertirUsuarioDTO(productoDTO.getUsuarioDTO()));
+		producto.setPrecio(productoDTO.getPrecio());
+		producto.setImagen(productoDTO.getImagen());
+		producto.setCategorias(ConverterCategoria.convertirCategoriaDTO(productoDTO.getCategorias()));
+		return producto;
 	}
 }

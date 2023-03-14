@@ -41,6 +41,7 @@ import com.aaron.epsilon_backend.utilidades.ConverterProducto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -238,6 +239,55 @@ public class ProductosRestController {
 		response.put(Const.MENSAJE, "El producto se ha insertado correctamente");
 		response.put("producto", nuevoProducto);
 		return new ResponseEntity<>(response,HttpStatus.CREATED);
+	}
+	
+	@PutMapping(value = "")
+	@Operation(
+    		summary = "Modifica un producto", description = "Modifica un producto",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "201",
+    						description = "¡Producto modificado correctamente!",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = "¡Error al modificar el producto!",
+    						content = @Content())
+    		})
+	public ResponseEntity<?> update(@RequestPart ProductoDTO producto, @RequestPart(required = false) MultipartFile file, BindingResult result){
+		Map<String,Object> response = new HashMap<>();
+		
+		if(result.hasErrors()) {
+			List<String> errors = result.getFieldErrors()
+					.stream()
+					.map(err -> "El campo '" + err.getField() +"' "+ err.getDefaultMessage())
+					.toList();
+			
+			response.put("errors", errors);
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
+		
+		// Almacenamos el fichero y obtenemos su URL
+		if (file != null) {
+			String urlImagen = null;
+			String imagen = storageService.store(file);
+			urlImagen = MvcUriComponentsBuilder
+							.fromMethodName(FicherosController.class, "serveFile", imagen, null)  
+							.build().toUriString();
+			producto.setImagen(urlImagen);
+		}
+		
+		try {
+			productosService.save(ConverterProducto.convertirProductoDTO(producto));
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		response.put(Const.MENSAJE, "El producto se ha modificado correctamente");
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
 	@PutMapping(value = "/favorito")

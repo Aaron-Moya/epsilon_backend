@@ -13,4 +13,13 @@ public class ConverterDirecciones {
 		direccionDto.setNumero(direccion.getNumero());
 		return direccionDto;
 	}
+	
+	public static Direcciones convertirDireccionDTO(DireccionDto direccionDTO) {
+		Direcciones direccion = new Direcciones();
+		direccion.setId(direccionDTO.getId());
+		direccion.setCiudad(direccionDTO.getCiudad());
+		direccion.setCalle(direccionDTO.getCalle());
+		direccion.setNumero(direccionDTO.getNumero());
+		return direccion;
+	}
 }

@@ -48,4 +48,17 @@ public class ConverterUsuario {
         
         return usuarioDto;
 	}
+	
+	public static Usuarios convertirUsuarioDTO(UsuarioDTO userDTO) {
+		Usuarios usuario = new Usuarios();
+		usuario.setId(userDTO.getId());
+		usuario.setCorreo(userDTO.getCorreo());
+		usuario.setUsuario(userDTO.getUsuario());
+		usuario.setFechaCreacion(userDTO.getFechaCreacion());
+		usuario.setAvatar(userDTO.getAvatar());
+        if (Objects.nonNull(userDTO.getDireccion()))
+        	usuario.setDireccion(ConverterDirecciones.convertirDireccionDTO(userDTO.getDireccion()));
+        
+        return usuario;
+	}
 }
