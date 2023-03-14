@@ -15,6 +15,7 @@ public class ConverterProducto {
 		productoDTO.setEstado(producto.getEstado());
 		productoDTO.setPrecio(producto.getPrecio());
 		productoDTO.setImagen(producto.getImagen());
+		productoDTO.setCategorias(ConverterCategoria.convertirCategoria(producto.getCategorias()));
 		return productoDTO;
 	}
 }

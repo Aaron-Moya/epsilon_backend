@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.aaron.epsilon_backend.modelos.dao.IProductosDAO;
 import com.aaron.epsilon_backend.modelos.entidades.Productos;
+import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IProductosService;
 
 @Service
@@ -35,6 +36,12 @@ public class ProductosServiceImpl implements IProductosService {
 	public void delete(Long id) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Page<Productos> findByUsuarios(Pageable page, Usuarios usuarios) {
+		// TODO Auto-generated method stub
+		return productosDAO.findByUsuarios(page, usuarios);
 	}
 
 }

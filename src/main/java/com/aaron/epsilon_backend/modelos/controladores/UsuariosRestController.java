@@ -58,8 +58,6 @@ public class UsuariosRestController {
 	@Autowired
 	private final IUsuariosService usuariosService;
 	@Autowired
-	private final IProductosService productosService;
-	@Autowired
 	private final IStorageService storageService;
 	
 	@SuppressWarnings("unused")
@@ -200,28 +198,6 @@ public class UsuariosRestController {
 		return usuario;
 	}
 	
-	@GetMapping("/favoritos")
-	@SecurityRequirement(name = "Bearer Authentication")
-	public ResponseEntity<?> getProductosFavoritos(@RequestParam long idUsuario) {
-		Usuarios usuario = usuariosService.findById(idUsuario);
-    	Set<Productos> listaProductos = null;
-    	List<ProductoDTO> listaProductosDTO = new ArrayList<>();
-		Map<String,Object> response = new HashMap<>();
-		
-		try {
-			listaProductos = usuario.getProductosFavoritos();
-			listaProductosDTO = listaProductos.stream()
-					.map(ConverterProducto::convertirProducto).toList();
-		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put(Const.MENSAJE, Const.ERROR_BD);
-			response.put(Const.ERROR, e.getMessage().concat(":")
-					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
-		return new ResponseEntity<>(listaProductosDTO,HttpStatus.OK);
-    }
-	
 	@PostMapping(value = "/registro")
 	@Operation(
     		summary = "Crea un usuario", description = "Crea un usuario",
@@ -282,73 +258,5 @@ public class UsuariosRestController {
 		response.put(Const.MENSAJE, "El usuario se ha insertado correctamente");
 		response.put("usuario", nuevoUsuario);
 		return new ResponseEntity<>(response,HttpStatus.CREATED);
-	}
-	
-	@PutMapping(value = "/favorito")
-	@Operation(
-    		summary = "Añade un producto a favoritos", description = "Añade un producto a favoritos",
-    		responses = {
-    				@ApiResponse(
-    						responseCode = "201",
-    						description = "¡Producto añadido a favoritos!",
-    						content = @Content()),
-					@ApiResponse(
-    						responseCode = "500",
-    						description = "¡Error al añadir el producto a favoritos!",
-    						content = @Content())
-    		})
-	@SecurityRequirement(name = "Bearer Authentication")
-	public ResponseEntity<?> addProductoFavorito(@RequestParam long idUsuario, 
-			@RequestParam long idProducto){
-		Usuarios usuarioActualizado = usuariosService.findById(idUsuario);
-		Productos producto = productosService.findById(idProducto);
-		Map<String,Object> response = new HashMap<>();
-		
-		try {
-			usuarioActualizado.getProductosFavoritos().add(producto);
-			usuariosService.save(usuarioActualizado);
-		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
-			response.put(Const.ERROR, e.getMessage().concat(":")
-					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
-		response.put("mensaje", "Se ha añadido correctamente le producto a favoritos");
-		return new ResponseEntity<>(response,HttpStatus.OK);
-	}
-	
-	@DeleteMapping(value = "/favorito")
-	@Operation(
-    		summary = "Elimina un producto de favoritos", description = "Elimina un producto de favoritos",
-    		responses = {
-    				@ApiResponse(
-    						responseCode = "201",
-    						description = "¡Producto eliminado de favoritos!",
-    						content = @Content()),
-					@ApiResponse(
-    						responseCode = "500",
-    						description = "¡Error al elimiar el producto de favoritos!",
-    						content = @Content())
-    		})
-	@SecurityRequirement(name = "Bearer Authentication")
-	public ResponseEntity<?> deleteProductoFavorito(@RequestParam long idUsuario, 
-			@RequestParam long idProducto){
-		Usuarios usuarioActualizado = usuariosService.findById(idUsuario);
-		Productos producto = productosService.findById(idProducto);
-		Map<String,Object> response = new HashMap<>();
-		
-		try {
-			usuarioActualizado.getProductosFavoritos().remove(producto);
-			usuariosService.save(usuarioActualizado);
-		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put(Const.MENSAJE, Const.ERROR_BD);
-			response.put(Const.ERROR, e.getMessage().concat(":")
-					.concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
-		response.put(Const.MENSAJE, "Se ha eliminado el producto de favoritos correctamente!");
-		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 }

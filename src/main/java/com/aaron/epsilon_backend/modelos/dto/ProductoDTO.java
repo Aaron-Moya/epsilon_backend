@@ -15,4 +15,5 @@ public class ProductoDTO {
 	private float precio;
 	private String estado;
 	private String imagen;
+	private CategoriaDTO categorias;
 }
