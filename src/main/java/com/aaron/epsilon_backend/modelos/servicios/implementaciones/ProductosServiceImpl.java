@@ -40,7 +40,6 @@ public class ProductosServiceImpl implements IProductosService {
 
 	@Override
 	public Page<Productos> findByUsuarios(Pageable page, Usuarios usuarios) {
-		// TODO Auto-generated method stub
 		return productosDAO.findByUsuarios(page, usuarios);
 	}
 

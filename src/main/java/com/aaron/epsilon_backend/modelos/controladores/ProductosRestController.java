@@ -41,7 +41,6 @@ import com.aaron.epsilon_backend.utilidades.ConverterProducto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
@@ -78,7 +77,7 @@ public class ProductosRestController {
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
-			listaProductos = productosService.findAll(page);
+			listaProductos = (Page<Productos>) productosService.findAll(page);
 			listaProductosDTO = listaProductos.getContent().stream()
 					.map(ConverterProducto::convertirProducto).toList();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
@@ -130,6 +129,18 @@ public class ProductosRestController {
 	}
 	
 	@GetMapping("/favoritos")
+	@Operation(
+    		summary = "Devuelve todos los productos favoritos de un usuario", description = "Devuelve todos los productos favoritos de un usuario",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "200",
+    						description = "OK",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = "Error al conectar con la base de datos",
+    						content = @Content())
+    		})
 	@SecurityRequirement(name = "Bearer Authentication")
 	public ResponseEntity<?> getProductosFavoritos(@RequestParam long idUsuario) {
 		Usuarios usuario = usuariosService.findById(idUsuario);
@@ -299,6 +310,10 @@ public class ProductosRestController {
     						description = "¡Producto añadido a favoritos!",
     						content = @Content()),
 					@ApiResponse(
+    						responseCode = "400",
+    						description = "¡No puedes añadir tu propio producto a favoritos!",
+    						content = @Content()),
+    				@ApiResponse(
     						responseCode = "500",
     						description = "¡Error al añadir el producto a favoritos!",
     						content = @Content())
@@ -310,17 +325,61 @@ public class ProductosRestController {
 		Productos producto = productosService.findById(idProducto);
 		Map<String,Object> response = new HashMap<>();
 		
+		if (idUsuario == producto.getUsuarios().getId()) {
+			response.put(Const.MENSAJE, "¡No puedes añadir tu propio producto a favoritos!");
+			return new ResponseEntity<>(response,HttpStatus.BAD_REQUEST);
+		}
+		
 		try {
 			usuarioActualizado.getProductosFavoritos().add(producto);
 			usuariosService.save(usuarioActualizado);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
-			response.put("mensaje", "Error al conectar con la base de datos");
+			response.put(Const.MENSAJE, "Error al conectar con la base de datos");
 			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		response.put("mensaje", "Se ha añadido correctamente le producto a favoritos");
+		return new ResponseEntity<>(response,HttpStatus.OK);
+	}
+	
+	@DeleteMapping()
+	@Operation(
+    		summary = "Elimina un producto", description = "Elimina un producto",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "201",
+    						description = "¡Producto eliminado!",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = "¡Error al elimiar el producto!",
+    						content = @Content())
+    		})
+	@SecurityRequirement(name = "Bearer Authentication")
+	public ResponseEntity<?> delete(@RequestParam long idProducto) {
+		Productos producto = productosService.findById(idProducto);
+		Map<String,Object> response = new HashMap<>();
+		
+		try {
+			producto.setBorrado(true);
+			productosService.save(producto);
+			// Borra el producto de los favoritos de los usuarios
+			usuariosService.findAll().forEach(usuario -> {
+				if (usuario.getProductosFavoritos().contains(producto))
+					usuario.getProductosFavoritos().remove(producto);
+				usuariosService.save(usuario);
+			});
+			
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		response.put(Const.MENSAJE, "Se ha eliminado el producto correctamente!");
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
@@ -339,7 +398,7 @@ public class ProductosRestController {
     		})
 	@SecurityRequirement(name = "Bearer Authentication")
 	public ResponseEntity<?> deleteProductoFavorito(@RequestParam long idUsuario, 
-			@RequestParam long idProducto){
+			@RequestParam long idProducto) {
 		Usuarios usuarioActualizado = usuariosService.findById(idUsuario);
 		Productos producto = productosService.findById(idProducto);
 		Map<String,Object> response = new HashMap<>();

@@ -13,9 +13,10 @@ public class ConverterProducto {
 		productoDTO.setFechaCreacion(producto.getFechaCreacion());
 		productoDTO.setStock(producto.getStock());
 		productoDTO.setEstado(producto.getEstado());
-		productoDTO.setUsuarioDTO(ConverterUsuario.convertirUsuario(producto.getUsuarios()));
+		productoDTO.setUsuarios(ConverterUsuario.convertirUsuario(producto.getUsuarios()));
 		productoDTO.setPrecio(producto.getPrecio());
 		productoDTO.setImagen(producto.getImagen());
+		productoDTO.setBorrado(producto.getBorrado());
 		productoDTO.setCategorias(ConverterCategoria.convertirCategoria(producto.getCategorias()));
 		return productoDTO;
 	}
@@ -28,9 +29,10 @@ public class ConverterProducto {
 		producto.setFechaCreacion(productoDTO.getFechaCreacion());
 		producto.setStock(productoDTO.getStock());
 		producto.setEstado(productoDTO.getEstado());
-		producto.setUsuarios(ConverterUsuario.convertirUsuarioDTO(productoDTO.getUsuarioDTO()));
+		producto.setUsuarios(ConverterUsuario.convertirUsuarioDTO(productoDTO.getUsuarios()));
 		producto.setPrecio(productoDTO.getPrecio());
 		producto.setImagen(productoDTO.getImagen());
+		producto.setBorrado(productoDTO.isBorrado());
 		producto.setCategorias(ConverterCategoria.convertirCategoriaDTO(productoDTO.getCategorias()));
 		return producto;
 	}

@@ -40,6 +40,7 @@ public class Productos implements java.io.Serializable {
 	private String estado;
 	private Date fechaCreacion;
 	private String imagen;
+	private boolean borrado;
 	private Set<Usuarios> usuariosCesta = new HashSet<>(0);
 	private Set<VentasProductos> ventasProductos = new HashSet<>(0);
 	private Set<Usuarios> usuariosFavorito = new HashSet<>(0);
@@ -48,7 +49,7 @@ public class Productos implements java.io.Serializable {
 	}
 
 	public Productos(int id, Categorias categorias, Usuarios usuarios, String nombre, String descripcion, float precio, int stock,
-			String estado, Date fechaCreacion, String imagen) {
+			String estado, Date fechaCreacion, String imagen, boolean borrado) {
 		this.id = id;
 		this.categorias = categorias;
 		this.usuarios = usuarios;
@@ -59,10 +60,11 @@ public class Productos implements java.io.Serializable {
 		this.estado = estado;
 		this.fechaCreacion = fechaCreacion;
 		this.imagen = imagen;
+		this.borrado = borrado;
 	}
 
 	public Productos(int id, Categorias categorias, Usuarios usuarios, String nombre, String descripcion, float precio, int stock,
-			String estado, Date fechaCreacion, String imagen, 
+			String estado, Date fechaCreacion, String imagen, boolean borrado, 
 			Set<Usuarios> usuariosCesta, Set<VentasProductos> ventasProductos, Set<Usuarios> usuariosFavorito) {
 		this.id = id;
 		this.categorias = categorias;
@@ -74,6 +76,7 @@ public class Productos implements java.io.Serializable {
 		this.estado = estado;
 		this.fechaCreacion = fechaCreacion;
 		this.imagen = imagen;
+		this.borrado = borrado;
 		this.usuariosCesta = usuariosCesta;
 		this.ventasProductos = ventasProductos;
 		this.usuariosFavorito = usuariosFavorito;
@@ -174,6 +177,15 @@ public class Productos implements java.io.Serializable {
 
 	public void setImagen(String imagen) {
 		this.imagen = imagen;
+	}
+	
+	@Column(name = "borrado", nullable = false)
+	public boolean getBorrado() {
+		return this.borrado;
+	}
+
+	public void setBorrado(boolean borrado) {
+		this.borrado = borrado;
 	}
 
 	@ManyToMany(fetch = FetchType.LAZY)
