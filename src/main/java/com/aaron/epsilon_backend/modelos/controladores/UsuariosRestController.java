@@ -259,4 +259,59 @@ public class UsuariosRestController {
 		response.put("usuario", nuevoUsuario);
 		return new ResponseEntity<>(response,HttpStatus.CREATED);
 	}
+	
+	@PutMapping(value = "/avatar")
+	@Operation(
+    		summary = "Cambia el avatar del usuario", description = "Cambia el avatar del usuario",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "201",
+    						description = "¡Avatar cambiado correctamente!",
+    						content = @Content()),
+    				@ApiResponse(
+    						responseCode = "500",
+    						description = "¡Error al cambiar el avatar!",
+    						content = @Content())
+    		})
+	@SecurityRequirement(name = "Bearer Authentication")
+	public ResponseEntity<?> cambiarAvatar(@RequestPart String idUsuario, 
+			@RequestPart MultipartFile file,
+			BindingResult result){
+		Usuarios usuario = usuariosService.findById(Long.parseLong(idUsuario));
+		Map<String,Object> response = new HashMap<>();
+		
+		if(result.hasErrors()) {
+			List<String> errors = result.getFieldErrors()
+					.stream()
+					.map(err -> "El campo '" + err.getField() +"' "+ err.getDefaultMessage())
+					.toList();
+			
+			response.put("errors", errors);
+			return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+		}
+		
+		// Almacenamos el fichero y obtenemos su URL
+		String urlImagen = null;
+		if (Objects.nonNull(file) && !file.isEmpty()) {
+			String imagen = storageService.store(file);
+			urlImagen = MvcUriComponentsBuilder
+							// El segundo argumento es necesario solo cuando queremos obtener la imagen
+							// En este caso tan solo necesitamos obtener la URL
+							.fromMethodName(FicherosController.class, "serveFile", imagen, null)  
+							.build().toUriString();
+		}
+		
+		try {
+			usuario.setAvatar(urlImagen);
+			usuariosService.save(usuario);
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put(Const.MENSAJE, "Error al conectar con la base de datos");
+			response.put(Const.ERROR, e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		response.put("urlImagen", urlImagen);
+		return new ResponseEntity<>(response,HttpStatus.OK);
+	}
 }
