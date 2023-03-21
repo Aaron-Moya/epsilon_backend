@@ -43,6 +43,7 @@ import com.aaron.epsilon_backend.utilidades.ConverterUsuario;
 import com.aaron.epsilon_backend.utilidades.Utilidades;
 import com.aaron.epsilon_backend.utilidades.Const;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -172,6 +173,7 @@ public class UsuariosRestController {
 	}
 	
 	@GetMapping("/login")
+	@Hidden
     @Operation(
     		summary = "Comprueba las credenciales de un usuario", description = "Comprueba las credenciales de un usuario",
     		responses = {

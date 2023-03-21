@@ -22,7 +22,7 @@ public class WebSecurityConfig {
 	String[] urls = new String[] { 
 			"", "/auth/login", "/api/usuarios/registro", 
 			"/api/usuarios/id/**", 
-			"/api/usuarios/correo/**", "/api/email/**", 
+			"/api/usuarios/correo/**", "/api/email/**",
 			"/api/productos", "/api/productos/id/**",
 			"/api/categorias",
 			"/files/**", "/v3/**", "/swagger-ui.html", "/swagger-ui/**" 
