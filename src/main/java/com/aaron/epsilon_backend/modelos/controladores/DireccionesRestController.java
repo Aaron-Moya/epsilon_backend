@@ -108,7 +108,7 @@ public class DireccionesRestController {
 				direccionDto = ConverterDirecciones.convertirDireccion(direccion);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put(Const.MENSAJE, Const.ERROR_BD);
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -134,8 +134,9 @@ public class DireccionesRestController {
     						content = @Content())
     		})
 	@SecurityRequirement(name = "Bearer Authentication")
-	public ResponseEntity<?> create(@RequestBody Direcciones direccion, @RequestParam long idUsuario, 
+	public ResponseEntity<?> create(@RequestBody DireccionDto direccionDto, @RequestParam long idUsuario, 
 			BindingResult result){
+		Direcciones direccion = ConverterDirecciones.convertirDireccionDTO(direccionDto);
 		Direcciones nuevaDireccion = null;
 		Set<Usuarios> usuarios = new HashSet<>();
 		Map<String,Object> response = new HashMap<>();
@@ -160,13 +161,12 @@ public class DireccionesRestController {
 			usuariosService.save(usuario);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put(Const.MENSAJE, Const.ERROR_BD);
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		response.put(Const.MENSAJE, "La direccion se ha insertado correctamente");
-		response.put("direccion", nuevaDireccion);
 		return new ResponseEntity<>(response,HttpStatus.CREATED);
 	}
 	
@@ -186,13 +186,8 @@ public class DireccionesRestController {
 	@SecurityRequirement(name = "Bearer Authentication")
 	public ResponseEntity<?> update(@RequestBody Direcciones direccion, 
 			BindingResult result){
-		Direcciones direccionActualizada = null;
-		//Set<Usuarios> usuarios = new HashSet<>();
 		Map<String,Object> response = new HashMap<>();
-		
-		//Usuarios usuario = usuariosService.findById(idUsuario);
-		//usuarios.add(usuariosService.findById(idUsuario));
-		
+				
 		if(result.hasErrors()) {
 			List<String> errors = result.getFieldErrors()
 					.stream()
@@ -204,19 +199,15 @@ public class DireccionesRestController {
 		}
 		
 		try {
-			//direccion.setUsuarios(usuarios);
-			direccionActualizada = direccionesService.save(direccion);
-			//usuario.setDireccion(nuevaDireccion);
-			//usuariosService.save(usuario);
+			direccionesService.save(direccion);
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put(Const.MENSAJE, Const.ERROR_BD);
-			response.put("error", e.getMessage().concat(":")
+			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
 		response.put(Const.MENSAJE, "La direccion se ha actualizado correctamente");
-		response.put("direccion", direccionActualizada);
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
