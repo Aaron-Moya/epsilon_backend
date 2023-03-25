@@ -24,6 +24,7 @@ public class WebSecurityConfig {
 			"/api/usuarios/id/**", 
 			"/api/usuarios/correo/**", "/api/email/**",
 			"/api/productos", "/api/productos/id/**",
+			"/api/productos/filtro/**",
 			"/api/categorias",
 			"/files/**", "/v3/**", "/swagger-ui.html", "/swagger-ui/**" 
 		};

@@ -77,7 +77,7 @@ public class ProductosRestController {
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
-			listaProductos = (Page<Productos>) productosService.findAll(page);
+			listaProductos = productosService.findAll(page);
 			listaProductosDTO = listaProductos.getContent().stream()
 					.map(ConverterProducto::convertirProducto).toList();
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
@@ -127,6 +127,46 @@ public class ProductosRestController {
 		productoDto = ConverterProducto.convertirProducto(producto);
 		return new ResponseEntity<>(productoDto,HttpStatus.OK);
 	}
+	
+	@GetMapping("/filtro")
+	@Operation(
+    		summary = "Devuelve productos dado unos filtros", description = "Devuelve productos dado unos filtros\"",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "200",
+    						description = "OK",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = "Error al conectar con la base de datos",
+    						content = @Content())
+    		})
+	@SecurityRequirement(name = "Bearer Authentication")
+	public ResponseEntity<?> getProductosByFiltro(Pageable page, @RequestParam Map<String, String> filtros) {
+		Page<Productos> listaProductos = null;
+    	List<ProductoDTO> listaProductosDTO = new ArrayList<>();
+		Map<String,Object> response = new HashMap<>();
+		
+		try {
+			listaProductos = productosService.findAll(page);
+			listaProductosDTO = listaProductos.stream()
+					.map(ConverterProducto::convertirProducto).toList();
+			
+			if (filtros.containsKey("nombre")) {
+				listaProductosDTO = listaProductosDTO.stream()
+					.filter(prod -> prod.getNombre().toLowerCase().contains(filtros.get("nombre").toLowerCase())).toList();
+			}
+			
+			
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return new ResponseEntity<>(new PageImpl<>(listaProductosDTO, page, listaProductos.getTotalElements()) ,HttpStatus.OK);
+    }
 	
 	@GetMapping("/favoritos")
 	@Operation(
