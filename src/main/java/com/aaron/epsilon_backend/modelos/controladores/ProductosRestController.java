@@ -149,7 +149,6 @@ public class ProductosRestController {
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
-			Query query = entityManager.createQuery"SELECT p FROM Productos p WHERE 1=1 ");
 			listaProductos = productosService.findAll(page);
 			listaProductosDTO = listaProductos.stream()
 					.map(ConverterProducto::convertirProducto).toList();
