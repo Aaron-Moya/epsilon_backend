@@ -43,6 +43,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import jakarta.persistence.Persistence;
 
 @CrossOrigin(origins = {"*"})
 @RestController
@@ -55,7 +56,7 @@ public class ProductosRestController {
 	private IUsuariosService usuariosService;
 	@Autowired
 	private IStorageService storageService;
-	
+		
 	@GetMapping
     @Operation(
     		
@@ -142,22 +143,21 @@ public class ProductosRestController {
     						content = @Content())
     		})
 	@SecurityRequirement(name = "Bearer Authentication")
-	public ResponseEntity<?> getProductosByFiltro(Pageable page, @RequestParam Map<String, String> filtros) {
+	public ResponseEntity<?> getProductosByFiltro(Pageable page, @RequestParam Map<String, ?> filtros) {
 		Page<Productos> listaProductos = null;
     	List<ProductoDTO> listaProductosDTO = new ArrayList<>();
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
+			Query query = entityManager.createQuery"SELECT p FROM Productos p WHERE 1=1 ");
 			listaProductos = productosService.findAll(page);
 			listaProductosDTO = listaProductos.stream()
 					.map(ConverterProducto::convertirProducto).toList();
 			
 			if (filtros.containsKey("nombre")) {
 				listaProductosDTO = listaProductosDTO.stream()
-					.filter(prod -> prod.getNombre().toLowerCase().contains(filtros.get("nombre").toLowerCase())).toList();
+					.filter(prod -> prod.getNombre().toLowerCase().contains(filtros.get("nombre").toString().toLowerCase())).toList();
 			}
-			
-			
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put(Const.MENSAJE, Const.ERROR_BD);
 			response.put(Const.ERROR, e.getMessage().concat(":")
