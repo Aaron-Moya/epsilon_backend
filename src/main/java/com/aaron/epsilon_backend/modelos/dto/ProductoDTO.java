@@ -13,6 +13,7 @@ public class ProductoDTO {
 	private Date fechaCreacion;
 	private int stock;
 	private float precio;
+	private float descuento;
 	private String estado;
 	private String imagen;
 	private boolean borrado;

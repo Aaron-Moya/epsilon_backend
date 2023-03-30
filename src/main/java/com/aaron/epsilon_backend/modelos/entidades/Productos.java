@@ -36,6 +36,7 @@ public class Productos implements java.io.Serializable {
 	private String nombre;
 	private String descripcion;
 	private float precio;
+	private float descuento;
 	private int stock;
 	private String estado;
 	private Date fechaCreacion;
@@ -48,7 +49,8 @@ public class Productos implements java.io.Serializable {
 	public Productos() {
 	}
 
-	public Productos(int id, Categorias categorias, Usuarios usuarios, String nombre, String descripcion, float precio, int stock,
+	public Productos(int id, Categorias categorias, Usuarios usuarios, String nombre, String descripcion, float precio, 
+			float descuento, int stock,
 			String estado, Date fechaCreacion, String imagen, boolean borrado) {
 		this.id = id;
 		this.categorias = categorias;
@@ -56,6 +58,7 @@ public class Productos implements java.io.Serializable {
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.precio = precio;
+		this.descuento = descuento;
 		this.stock = stock;
 		this.estado = estado;
 		this.fechaCreacion = fechaCreacion;
@@ -63,7 +66,7 @@ public class Productos implements java.io.Serializable {
 		this.borrado = borrado;
 	}
 
-	public Productos(int id, Categorias categorias, Usuarios usuarios, String nombre, String descripcion, float precio, int stock,
+	public Productos(int id, Categorias categorias, Usuarios usuarios, String nombre, String descripcion, float precio, float descuento, int stock,
 			String estado, Date fechaCreacion, String imagen, boolean borrado, 
 			Set<Usuarios> usuariosCesta, Set<VentasProductos> ventasProductos, Set<Usuarios> usuariosFavorito) {
 		this.id = id;
@@ -72,6 +75,7 @@ public class Productos implements java.io.Serializable {
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.precio = precio;
+		this.descuento = descuento;
 		this.stock = stock;
 		this.estado = estado;
 		this.fechaCreacion = fechaCreacion;
@@ -140,6 +144,15 @@ public class Productos implements java.io.Serializable {
 
 	public void setPrecio(float precio) {
 		this.precio = precio;
+	}
+	
+	@Column(name = "descuento", nullable = false, precision = 2, scale = 0)
+	public float getDescuento() {
+		return this.descuento;
+	}
+
+	public void setDescuento(float descuento) {
+		this.descuento = descuento;
 	}
 
 	@Column(name = "stock", nullable = false)

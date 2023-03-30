@@ -15,6 +15,7 @@ public class ConverterProducto {
 		productoDTO.setEstado(producto.getEstado());
 		productoDTO.setUsuarios(ConverterUsuario.convertirUsuario(producto.getUsuarios()));
 		productoDTO.setPrecio(producto.getPrecio());
+		productoDTO.setDescuento(producto.getDescuento());
 		productoDTO.setImagen(producto.getImagen());
 		productoDTO.setBorrado(producto.getBorrado());
 		productoDTO.setCategorias(ConverterCategoria.convertirCategoria(producto.getCategorias()));
@@ -31,6 +32,7 @@ public class ConverterProducto {
 		producto.setEstado(productoDTO.getEstado());
 		producto.setUsuarios(ConverterUsuario.convertirUsuarioDTO(productoDTO.getUsuarios()));
 		producto.setPrecio(productoDTO.getPrecio());
+		producto.setDescuento(productoDTO.getDescuento());
 		producto.setImagen(productoDTO.getImagen());
 		producto.setBorrado(productoDTO.isBorrado());
 		producto.setCategorias(ConverterCategoria.convertirCategoriaDTO(productoDTO.getCategorias()));
