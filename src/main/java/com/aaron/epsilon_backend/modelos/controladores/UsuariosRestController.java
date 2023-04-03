@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,20 +26,16 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
-import com.aaron.epsilon_backend.modelos.dto.ProductoDTO;
 import com.aaron.epsilon_backend.modelos.dto.UsuarioCrearDTO;
 import com.aaron.epsilon_backend.modelos.dto.UsuarioDTO;
 import com.aaron.epsilon_backend.modelos.dto.UsuarioLoginDTO;
-import com.aaron.epsilon_backend.modelos.entidades.Productos;
 import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
-import com.aaron.epsilon_backend.modelos.servicios.interfaces.IProductosService;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IUsuariosService;
 import com.aaron.epsilon_backend.upload.FicherosController;
 import com.aaron.epsilon_backend.upload.IStorageService;
-import com.aaron.epsilon_backend.utilidades.ConverterProducto;
+import com.aaron.epsilon_backend.utilidades.Const;
 import com.aaron.epsilon_backend.utilidades.ConverterUsuario;
 import com.aaron.epsilon_backend.utilidades.Utilidades;
-import com.aaron.epsilon_backend.utilidades.Const;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;

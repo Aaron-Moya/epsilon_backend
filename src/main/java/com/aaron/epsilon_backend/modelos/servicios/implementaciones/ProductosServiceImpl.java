@@ -10,6 +10,7 @@ import com.aaron.epsilon_backend.modelos.dao.IProductosDAO;
 import com.aaron.epsilon_backend.modelos.entidades.Productos;
 import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IProductosService;
+import com.aaron.epsilon_backend.utilidades.FiltroCategoria;
 
 @Service
 public class ProductosServiceImpl implements IProductosService {
@@ -19,7 +20,7 @@ public class ProductosServiceImpl implements IProductosService {
 	
 	@Override
 	public Page<Productos> findAll(Pageable page) {
-		return (Page<Productos>) productosDAO.findAll(page);
+		return productosDAO.findAll(page);
 	}
 
 	@Override
@@ -41,6 +42,11 @@ public class ProductosServiceImpl implements IProductosService {
 	@Override
 	public Page<Productos> findByUsuarios(Pageable page, Usuarios usuarios) {
 		return productosDAO.findByUsuarios(page, usuarios);
+	}
+
+	@Override
+	public Page<Productos> findByFiltroCategoria(FiltroCategoria filtro, Pageable page) {
+		return productosDAO.getByFiltroCategorias(filtro, page);
 	}
 
 }

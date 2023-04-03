@@ -38,12 +38,12 @@ import com.aaron.epsilon_backend.upload.FicherosController;
 import com.aaron.epsilon_backend.upload.IStorageService;
 import com.aaron.epsilon_backend.utilidades.Const;
 import com.aaron.epsilon_backend.utilidades.ConverterProducto;
+import com.aaron.epsilon_backend.utilidades.FiltroCategoria;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.persistence.Persistence;
 
 @CrossOrigin(origins = {"*"})
 @RestController
@@ -143,20 +143,15 @@ public class ProductosRestController {
     						content = @Content())
     		})
 	@SecurityRequirement(name = "Bearer Authentication")
-	public ResponseEntity<?> getProductosByFiltro(Pageable page, @RequestParam Map<String, ?> filtros) {
+	public ResponseEntity<?> getProductosByFiltro(Pageable page, FiltroCategoria filtro) {
 		Page<Productos> listaProductos = null;
     	List<ProductoDTO> listaProductosDTO = new ArrayList<>();
 		Map<String,Object> response = new HashMap<>();
 		
 		try {
-			listaProductos = productosService.findAll(page);
+			listaProductos= productosService.findByFiltroCategoria(filtro, page);
 			listaProductosDTO = listaProductos.stream()
 					.map(ConverterProducto::convertirProducto).toList();
-			
-			if (filtros.containsKey("nombre")) {
-				listaProductosDTO = listaProductosDTO.stream()
-					.filter(prod -> prod.getNombre().toLowerCase().contains(filtros.get("nombre").toString().toLowerCase())).toList();
-			}
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put(Const.MENSAJE, Const.ERROR_BD);
 			response.put(Const.ERROR, e.getMessage().concat(":")

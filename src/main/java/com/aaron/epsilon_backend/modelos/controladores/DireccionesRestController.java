@@ -29,7 +29,6 @@ import com.aaron.epsilon_backend.modelos.servicios.interfaces.IDireccionesServic
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IUsuariosService;
 import com.aaron.epsilon_backend.utilidades.Const;
 import com.aaron.epsilon_backend.utilidades.ConverterDirecciones;
-import com.aaron.epsilon_backend.utilidades.ConverterUsuario;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;

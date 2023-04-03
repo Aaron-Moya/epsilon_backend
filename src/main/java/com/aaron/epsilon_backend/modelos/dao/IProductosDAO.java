@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.aaron.epsilon_backend.modelos.entidades.Productos;
 import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
+import com.aaron.epsilon_backend.utilidades.FiltroCategoria;
 
 import io.swagger.v3.oas.annotations.Hidden;
 
@@ -14,11 +15,19 @@ import io.swagger.v3.oas.annotations.Hidden;
 public interface IProductosDAO extends JpaRepository<Productos, Long> {
 
 	@Query(value = "SELECT * FROM PRODUCTOS WHERE BORRADO = false", nativeQuery = true)
-	public Page<Productos> findAll(Pageable page);
+	Page<Productos> findAll(Pageable page);
 	
 	@Query(value = "select productos.* from productos, usuarios where productos.id_usuario = usuarios.id "
 			+ "and productos.borrado = false and productos.id_usuario = :#{#usuarios.id}",
 			nativeQuery = true)
-	public Page<Productos> findByUsuarios(Pageable page,Usuarios usuarios);
+	Page<Productos> findByUsuarios(Pageable page,Usuarios usuarios);
+	
+	@Query(value = "SELECT producto "
+			+ "FROM Productos producto "
+			+ "WHERE borrado = false "
+			+ "AND (:#{#filtro.nombre} IS NULL OR LOWER(producto.nombre) LIKE '%' || LOWER(:#{#filtro.nombre}) || '%')"
+			+ "AND (:#{#filtro.categoria} IS NULL OR LOWER(producto.categorias.nombre) = LOWER(:#{#filtro.categoria})) "
+		)
+	Page<Productos> getByFiltroCategorias(FiltroCategoria filtro, Pageable page);
 	//public Page<Productos> findByUsuariosAndUsuariosCesta(Pageable page,Usuarios usuarios);
 }
