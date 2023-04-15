@@ -25,7 +25,10 @@ public interface IProductosDAO extends JpaRepository<Productos, Long> {
 	@Query(value = "SELECT producto "
 			+ "FROM Productos producto "
 			+ "WHERE borrado = false "
-			+ "AND (:#{#filtro.nombre} IS NULL OR LOWER(producto.nombre) LIKE '%' || LOWER(:#{#filtro.nombre}) || '%')"
+			+ "AND (:#{#filtro.nombre} IS NULL OR LOWER(producto.nombre) LIKE '%' || LOWER(:#{#filtro.nombre}) || '%') "
+			+ "AND (:#{#filtro.estado} IS NULL OR LOWER(producto.estado) = LOWER(:#{#filtro.estado})) "
+			+ "AND (:#{#filtro.stock} IS NULL OR producto.stock >= :#{#filtro.stock}) "
+			+ "AND (:#{#filtro.precio} IS NULL OR producto.precio <= :#{#filtro.precio}) "
 			+ "AND (:#{#filtro.categoria} IS NULL OR LOWER(producto.categorias.nombre) = LOWER(:#{#filtro.categoria})) "
 		)
 	Page<Productos> getByFiltroCategorias(FiltroCategoria filtro, Pageable page);

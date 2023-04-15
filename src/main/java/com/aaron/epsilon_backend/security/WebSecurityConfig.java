@@ -23,7 +23,7 @@ public class WebSecurityConfig {
 			"", "/auth/login", "/api/usuarios/registro", 
 			"/api/usuarios/id/**", 
 			"/api/usuarios/correo/**", "/api/email/**",
-			"/api/productos", "/api/productos/id/**",
+			"/api/productos", "/api/productos/id/**", "/api/productos/usuario/**",
 			"/api/productos/filtro/**",
 			"/api/categorias",
 			"/files/**", "/v3/**", "/swagger-ui.html", "/swagger-ui/**" 

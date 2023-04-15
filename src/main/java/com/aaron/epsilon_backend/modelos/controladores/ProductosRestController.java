@@ -210,7 +210,7 @@ public class ProductosRestController {
     						content = @Content())
     		})
 	@PageableAsQueryParam
-	@SecurityRequirement(name = "Bearer Authentication")
+	//@SecurityRequirement(name = "Bearer Authentication")
     public ResponseEntity<?> getByUsuario(Pageable page, @RequestParam long idUsuario) {
 		Usuarios usuario = usuariosService.findById(idUsuario);
     	Page<Productos> listaProductos = null;

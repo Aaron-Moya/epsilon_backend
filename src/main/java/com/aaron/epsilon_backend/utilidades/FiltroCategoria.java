@@ -11,4 +11,7 @@ public class FiltroCategoria {
 
 	private String nombre;
 	private String categoria;
+	private String estado;
+	private Float precio;
+	private Integer stock;
 }
