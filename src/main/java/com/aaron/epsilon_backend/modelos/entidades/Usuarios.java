@@ -37,7 +37,7 @@ public class Usuarios implements java.io.Serializable {
 	private String avatar;
 	private Set<Valoraciones> valoracionesRecibidas = new HashSet<>(0);
 	private Set<Ventas> ventasRealizadas = new HashSet<>(0);
-	private Set<Productos> productosCesta = new HashSet<>(0);
+	private Set<Cestas> cestas = new HashSet<>();
 	private Set<Valoraciones> valoracionesDadas = new HashSet<>(0);
 	private Set<Productos> productosFavoritos = new HashSet<>(0);
 	private Set<Ventas>  comprasRealizadas = new HashSet<>(0);
@@ -56,7 +56,7 @@ public class Usuarios implements java.io.Serializable {
 	}
 
 	public Usuarios(int id, Direcciones direcciones, String usuario, String password, String correo, Date fechaCreacion,
-			String avatar, Set<Valoraciones> valoracionesRecibidas, Set<Ventas> ventasRealizadas, Set<Productos> productosCesta,
+			String avatar, Set<Valoraciones> valoracionesRecibidas, Set<Ventas> ventasRealizadas, Set<Cestas> cesta,
 			Set<Valoraciones> valoracionesDadas, Set<Productos> productosFavoritos, Set<Ventas> comprasRealizadas, Set<Productos> productos) {
 		this.id = id;
 		this.direccion = direcciones;
@@ -67,7 +67,7 @@ public class Usuarios implements java.io.Serializable {
 		this.avatar = avatar;
 		this.valoracionesRecibidas = valoracionesRecibidas;
 		this.ventasRealizadas = ventasRealizadas;
-		this.productosCesta = productosCesta;
+		this.cestas = cesta;
 		this.valoracionesDadas = valoracionesDadas;
 		this.productosFavoritos = productosFavoritos;
 		this.comprasRealizadas = comprasRealizadas;
@@ -160,16 +160,13 @@ public class Usuarios implements java.io.Serializable {
 		this.ventasRealizadas = ventasRealizadas;
 	}
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "cestas", joinColumns = {
-			@JoinColumn(name = "usuarios_id", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "productos_id", nullable = false, updatable = false) })
-	public Set<Productos> getProductosCesta() {
-		return this.productosCesta;
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+	public Set<Cestas> getCestas() {
+		return this.cestas;
 	}
 
-	public void setProductosCesta(Set<Productos> productos) {
-		this.productosCesta = productos;
+	public void setCestas(Set<Cestas> cesta) {
+		this.cestas = cesta;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioValorador")

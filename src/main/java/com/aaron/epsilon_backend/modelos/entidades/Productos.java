@@ -6,6 +6,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -42,7 +43,7 @@ public class Productos implements java.io.Serializable {
 	private Date fechaCreacion;
 	private String imagen;
 	private boolean borrado;
-	private Set<Usuarios> usuariosCesta = new HashSet<>(0);
+	private Set<Cestas> cestas = new HashSet<>();
 	private Set<VentasProductos> ventasProductos = new HashSet<>(0);
 	private Set<Usuarios> usuariosFavorito = new HashSet<>(0);
 
@@ -68,7 +69,7 @@ public class Productos implements java.io.Serializable {
 
 	public Productos(int id, Categorias categorias, Usuarios usuarios, String nombre, String descripcion, float precio, float descuento, int stock,
 			String estado, Date fechaCreacion, String imagen, boolean borrado, 
-			Set<Usuarios> usuariosCesta, Set<VentasProductos> ventasProductos, Set<Usuarios> usuariosFavorito) {
+			Set<Cestas> cestas, Set<VentasProductos> ventasProductos, Set<Usuarios> usuariosFavorito) {
 		this.id = id;
 		this.categorias = categorias;
 		this.usuarios = usuarios;
@@ -81,7 +82,7 @@ public class Productos implements java.io.Serializable {
 		this.fechaCreacion = fechaCreacion;
 		this.imagen = imagen;
 		this.borrado = borrado;
-		this.usuariosCesta = usuariosCesta;
+		this.cestas = cestas;
 		this.ventasProductos = ventasProductos;
 		this.usuariosFavorito = usuariosFavorito;
 	}
@@ -201,16 +202,13 @@ public class Productos implements java.io.Serializable {
 		this.borrado = borrado;
 	}
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "cestas", joinColumns = {
-			@JoinColumn(name = "productos_id", nullable = false, updatable = false) }, inverseJoinColumns = {
-					@JoinColumn(name = "usuarios_id", nullable = false, updatable = false) })
-	public Set<Usuarios> getUsuariosCesta() {
-		return this.usuariosCesta;
+	@OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
+	public Set<Cestas> getCestas() {
+		return this.cestas;
 	}
 
-	public void setUsuariosCesta(Set<Usuarios> usuariosCesta) {
-		this.usuariosCesta = usuariosCesta;
+	public void setCestas(Set<Cestas> cesta) {
+		this.cestas = cesta;
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "producto")
