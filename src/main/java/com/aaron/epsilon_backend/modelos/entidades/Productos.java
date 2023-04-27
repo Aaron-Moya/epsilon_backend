@@ -203,6 +203,7 @@ public class Productos implements java.io.Serializable {
 	}
 
 	@OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("producto")
 	public Set<Cestas> getCestas() {
 		return this.cestas;
 	}

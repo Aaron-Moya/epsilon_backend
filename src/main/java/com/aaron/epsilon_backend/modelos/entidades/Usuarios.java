@@ -161,6 +161,7 @@ public class Usuarios implements java.io.Serializable {
 	}
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+	@JsonIgnoreProperties("usuario")
 	public Set<Cestas> getCestas() {
 		return this.cestas;
 	}
