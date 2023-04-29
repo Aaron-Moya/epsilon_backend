@@ -12,6 +12,8 @@ public interface ICestasService {
 	
 	public Cestas findByUsuarioAndProducto(Usuarios usuario, Productos producto);
 	
+	public List<Cestas> findByUsuario(Usuarios usuario);
+	
 	public Cestas save(Cestas cesta);
 	
 	public Cestas findById(Long id);

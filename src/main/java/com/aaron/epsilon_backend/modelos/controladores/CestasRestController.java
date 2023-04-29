@@ -120,6 +120,47 @@ public class CestasRestController {
 		return new ResponseEntity<>(cestaDto,HttpStatus.OK);
 	}
 	
+	@GetMapping("/usuario/{idUsuario}")
+    @Operation(
+    		summary = "Devuelve los productos de la cesta de un usuario", description = "Devuelve los productos de la cesta de un usuario",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "200",
+    						description = "OK",
+    						content = @Content()),
+    				@ApiResponse(
+    						responseCode = "404",
+    						description = "No se han encontrado cestas con ese id de usuario",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = Const.ERROR_BD,
+    						content = @Content())
+    		})
+	@SecurityRequirement(name = "Bearer Authentication")
+	public ResponseEntity<?> getByUsuario(@PathVariable Long idUsuario) {
+		List<CestaDTO> cestasDto = new ArrayList<>();
+		Usuarios usuario = usuariosService.findById(idUsuario);
+		Map<String,Object> response = new HashMap<>();
+		
+		if(usuario==null) { // El id no existe
+			response.put(Const.MENSAJE, "El usuario con ID: ".concat(idUsuario.toString().concat(" no existe en la base de datos")));
+			return new ResponseEntity<>(response,HttpStatus.NOT_FOUND);
+		}
+		
+		try {
+			cestasService.findByUsuario(usuario).forEach(cesta -> {
+				cestasDto.add(ConverterCesta.convertirCesta(cesta));
+			});
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<>(cestasDto,HttpStatus.OK);
+	}
+	
 	@PostMapping()
 	@Operation(
     		summary = "Añade un producto a la cesta", description = "Si no hay productos crea una cesta nueva, si no simplemente añade 1 a la cantidad",

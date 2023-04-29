@@ -46,4 +46,9 @@ public class CestasServiceImpl implements ICestasService {
 		return cestasDAO.findByUsuarioAndProducto(usuario, producto);
 	}
 
+	@Override
+	public List<Cestas> findByUsuario(Usuarios usuario) {
+		return cestasDAO.findByUsuario(usuario);
+	}
+
 }
