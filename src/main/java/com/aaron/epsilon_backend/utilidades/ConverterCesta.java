@@ -8,8 +8,8 @@ public class ConverterCesta {
 	public static CestaDTO convertirCesta(Cestas cesta) {
 		CestaDTO cestaDTO = new CestaDTO();
 		cestaDTO.setId(cesta.getId());
-		cestaDTO.setIdProducto(cesta.getUsuario().getId());
-		cestaDTO.setIdUsuario(cesta.getProducto().getId());
+		cestaDTO.setIdProducto(cesta.getProducto().getId());
+		cestaDTO.setIdUsuario(cesta.getUsuario().getId());
 		cestaDTO.setCantidad(cesta.getCantidad());
 		return cestaDTO;
 	}

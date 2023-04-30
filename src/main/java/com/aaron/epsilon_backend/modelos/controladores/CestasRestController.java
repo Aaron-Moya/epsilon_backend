@@ -246,7 +246,7 @@ public class CestasRestController {
 		}
 		
 		
-		response.put(Const.MENSAJE, "Cantidad bajada correctamente");
+		response.put(Const.MENSAJE, "Cantidad disminuida correctamente");
 		/*if (cestaExiste == null)
 			response.put(Const.MENSAJE, "Se ha creado una nueva cesta");
 		else
