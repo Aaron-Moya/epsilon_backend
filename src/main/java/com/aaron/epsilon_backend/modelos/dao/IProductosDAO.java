@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.Hidden;
 @Hidden
 public interface IProductosDAO extends JpaRepository<Productos, Long> {
 
-	@Query(value = "SELECT * FROM PRODUCTOS WHERE BORRADO = false", nativeQuery = true)
+	@Query(value = "SELECT * FROM PRODUCTOS WHERE BORRADO = false AND STOCK > 0", nativeQuery = true)
 	Page<Productos> findAll(Pageable page);
 	
 	@Query(value = "select productos.* from productos, usuarios where productos.id_usuario = usuarios.id "
