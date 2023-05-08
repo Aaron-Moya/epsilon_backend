@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aaron.epsilon_backend.modelos.dto.ProductoCantidadDTO;
 import com.aaron.epsilon_backend.modelos.dto.VentasDTO;
+import com.aaron.epsilon_backend.modelos.dto.VentasProductosDTO;
 import com.aaron.epsilon_backend.modelos.entidades.Cestas;
 import com.aaron.epsilon_backend.modelos.entidades.Productos;
 import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
@@ -36,6 +37,7 @@ import com.aaron.epsilon_backend.modelos.servicios.interfaces.IVentasProductosSe
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IVentasService;
 import com.aaron.epsilon_backend.utilidades.Const;
 import com.aaron.epsilon_backend.utilidades.ConverterVenta;
+import com.aaron.epsilon_backend.utilidades.ConverterVentaProducto;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -191,6 +193,8 @@ public class VentasRestController {
 	@SecurityRequirement(name = "Bearer Authentication")
 	public ResponseEntity<?> getByUsuarioVendedor(@PathVariable Long idUsuario) {
 		List<Ventas> ventas = new ArrayList<>();
+		List<VentasProductosDTO> ventasProductosDTOs = new ArrayList<>();
+		List<VentasProductos> ventasProductos = new ArrayList<>();
 		Usuarios usuario = usuariosService.findById(idUsuario);
 		Map<String,Object> response = new HashMap<>();
 		
@@ -200,14 +204,20 @@ public class VentasRestController {
 		}
 		
 		try {
-			ventasService.findByUsuarioVendedor(usuario);
+			//ventas = ventasService.findByUsuarioVendedor(usuario);
+			ventasProductos = ventasProductosService.findAll();
+			ventasProductos.forEach(ventaProducto -> {
+				if (ventaProducto.getProducto().getUsuarios() == usuario) {
+					ventasProductosDTOs.add(ConverterVentaProducto.convertirVentaProducto(ventaProducto));
+				}
+			});
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put(Const.MENSAJE, Const.ERROR_BD);
 			response.put(Const.ERROR, e.getMessage().concat(":")
 					.concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<>(ventas,HttpStatus.OK);
+		return new ResponseEntity<>(ventasProductosDTOs,HttpStatus.OK);
 	}
 	
 	@PostMapping()
