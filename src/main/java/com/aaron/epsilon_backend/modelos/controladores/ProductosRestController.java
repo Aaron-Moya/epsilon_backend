@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.springdoc.core.converters.models.PageableAsQueryParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +30,21 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
+import com.aaron.epsilon_backend.modelos.dto.ProductoBibliotecaDTO;
 import com.aaron.epsilon_backend.modelos.dto.ProductoDTO;
 import com.aaron.epsilon_backend.modelos.entidades.Productos;
 import com.aaron.epsilon_backend.modelos.entidades.Usuarios;
+import com.aaron.epsilon_backend.modelos.entidades.Ventas;
+import com.aaron.epsilon_backend.modelos.entidades.VentasProductos;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IProductosService;
 import com.aaron.epsilon_backend.modelos.servicios.interfaces.IUsuariosService;
+import com.aaron.epsilon_backend.modelos.servicios.interfaces.IVentasProductosService;
+import com.aaron.epsilon_backend.modelos.servicios.interfaces.IVentasService;
 import com.aaron.epsilon_backend.upload.FicherosController;
 import com.aaron.epsilon_backend.upload.IStorageService;
 import com.aaron.epsilon_backend.utilidades.Const;
 import com.aaron.epsilon_backend.utilidades.ConverterProducto;
+import com.aaron.epsilon_backend.utilidades.ConverterProductoBiblioteca;
 import com.aaron.epsilon_backend.utilidades.FiltroCategoria;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,6 +61,10 @@ public class ProductosRestController {
 	private IProductosService productosService;
 	@Autowired
 	private IUsuariosService usuariosService;
+	@Autowired
+	private IVentasService ventasService;
+	@Autowired
+	private IVentasProductosService ventasProductosService;
 	@Autowired
 	private IStorageService storageService;
 		
@@ -229,6 +240,57 @@ public class ProductosRestController {
 		}
 		
 		return new ResponseEntity<>(new PageImpl<>(listaProductosDTO, page, listaProductos.getTotalElements()) ,HttpStatus.OK);
+    }
+	
+	@GetMapping("/biblioteca")
+    @Operation(
+    		summary = "Devuelve todos los productos que a comprado un usuario", description = "Devuelve todos los productos que a comprado un usuario",
+    		responses = {
+    				@ApiResponse(
+    						responseCode = "200",
+    						description = "OK",
+    						content = @Content()),
+					@ApiResponse(
+    						responseCode = "500",
+    						description = "Error al conectar con la base de datos",
+    						content = @Content())
+    		})
+	@SecurityRequirement(name = "Bearer Authentication")
+    public ResponseEntity<?> getProductosBiblioteca(@RequestParam long idUsuario) {
+		Usuarios usuario = usuariosService.findById(idUsuario);
+    	List<Ventas> listaVentas = null;
+    	List<VentasProductos> listaVentasProductos = new ArrayList<>();
+    	List<ProductoBibliotecaDTO> listaProductosDTO = new ArrayList<>();
+		Map<String,Object> response = new HashMap<>();
+		
+		try {
+			listaVentas = ventasService.findByUsuarioComprador(usuario);
+			listaVentas.forEach(venta -> {
+				listaVentasProductos.addAll(ventasProductosService.findByVenta(venta));
+			});
+			listaVentasProductos.forEach(ventaProducto -> {
+				Productos prod = ventaProducto.getProducto();
+				listaProductosDTO.add(ConverterProductoBiblioteca.convertirProducto(prod, ventaProducto.getCantidad()));
+			});
+			for (int i = 0; i < listaProductosDTO.size(); i++)
+		    {
+		        for (int j = i + 1; j < listaProductosDTO.size(); j++)
+		        {
+		            if (listaProductosDTO.get(i) != null && listaProductosDTO.get(i).getId() == listaProductosDTO.get(j).getId()) {
+		            	listaProductosDTO.get(i).setCantidad(
+		            			listaProductosDTO.get(i).getCantidad() + listaProductosDTO.get(j).getCantidad());
+		            	listaProductosDTO.remove(listaProductosDTO.get(j));
+		            }
+		        }
+		    }
+		} catch (DataAccessException e) {  // Error al acceder a la base de datos
+			response.put(Const.MENSAJE, Const.ERROR_BD);
+			response.put(Const.ERROR, e.getMessage().concat(":")
+					.concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+		return new ResponseEntity<>(listaProductosDTO,HttpStatus.OK);
     }
 	
 	@PostMapping(value = "")
