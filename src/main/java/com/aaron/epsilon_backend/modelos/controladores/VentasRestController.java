@@ -162,7 +162,10 @@ public class VentasRestController {
 			ventasDTOs = ventas.stream()
 					.map(ConverterVenta::convertirVenta).toList();
 			ventasDTOs.forEach(venta -> {
-				venta.setTotalProductos(ventasProductosService.findByVenta(ventasService.findById((long) venta.getId())).size()); 
+				ventasProductosService.findByVenta(ventasService.findById((long) venta.getId()))
+					.forEach(ventaProducto -> {
+						venta.setTotalProductos(venta.getTotalProductos() + ventaProducto.getCantidad());
+					});//.size(); 
 			});
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put(Const.MENSAJE, Const.ERROR_BD);
