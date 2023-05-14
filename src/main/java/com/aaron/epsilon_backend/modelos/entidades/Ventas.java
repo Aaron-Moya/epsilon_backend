@@ -27,7 +27,6 @@ public class Ventas implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private int id;
-	private Usuarios usuarioVendedor;
 	private Usuarios usuarioComprador;
 	private Date fechaVenta;
 	private float total;
@@ -36,18 +35,16 @@ public class Ventas implements java.io.Serializable {
 	public Ventas() {
 	}
 
-	public Ventas(int id, Usuarios usuarioVendedor, Usuarios usuarioComprador, Date fechaVenta, float total) {
+	public Ventas(int id, Usuarios usuarioComprador, Date fechaVenta, float total) {
 		this.id = id;
-		this.usuarioVendedor = usuarioVendedor;
 		this.usuarioComprador = usuarioComprador;
 		this.fechaVenta = fechaVenta;
 		this.total = total;
 	}
 
-	public Ventas(int id, Usuarios usuarioVendedor, Usuarios usuarioComprador, Date fechaVenta, float total,
+	public Ventas(int id, Usuarios usuarioComprador, Date fechaVenta, float total,
 			Set<VentasProductos> ventasProductos) {
 		this.id = id;
-		this.usuarioVendedor = usuarioVendedor;
 		this.usuarioComprador = usuarioComprador;
 		this.fechaVenta = fechaVenta;
 		this.total = total;
@@ -63,16 +60,6 @@ public class Ventas implements java.io.Serializable {
 
 	public void setId(int id) {
 		this.id = id;
-	}
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "id_vendedor", nullable = false)
-	public Usuarios getUsuarioVendedor() {
-		return this.usuarioVendedor;
-	}
-
-	public void setUsuarioVendedor(Usuarios usuario) {
-		this.usuarioVendedor = usuario;
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)

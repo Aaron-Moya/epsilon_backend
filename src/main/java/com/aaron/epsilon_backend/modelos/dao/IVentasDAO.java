@@ -12,6 +12,5 @@ import io.swagger.v3.oas.annotations.Hidden;
 @Hidden
 public interface IVentasDAO extends CrudRepository<Ventas, Long> {
 
-	List<Ventas> findByUsuarioVendedor(Usuarios usuario);
 	List<Ventas> findByUsuarioComprador(Usuarios usuario);
 }

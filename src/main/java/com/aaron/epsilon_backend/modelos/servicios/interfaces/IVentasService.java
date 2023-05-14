@@ -11,8 +11,6 @@ public interface IVentasService {
 	
 	public Ventas findById(Long id);
 	
-	public List<Ventas> findByUsuarioVendedor(Usuarios usuario);
-	
 	public List<Ventas> findByUsuarioComprador(Usuarios usuario);
 	
 	public Ventas save(Ventas venta);

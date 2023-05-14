@@ -36,7 +36,6 @@ public class Usuarios implements java.io.Serializable {
 	private Date fechaCreacion;
 	private String avatar;
 	private Set<Valoraciones> valoracionesRecibidas = new HashSet<>(0);
-	private Set<Ventas> ventasRealizadas = new HashSet<>(0);
 	private Set<Cestas> cestas = new HashSet<>();
 	private Set<Valoraciones> valoracionesDadas = new HashSet<>(0);
 	private Set<Productos> productosFavoritos = new HashSet<>(0);
@@ -56,7 +55,7 @@ public class Usuarios implements java.io.Serializable {
 	}
 
 	public Usuarios(int id, Direcciones direcciones, String usuario, String password, String correo, Date fechaCreacion,
-			String avatar, Set<Valoraciones> valoracionesRecibidas, Set<Ventas> ventasRealizadas, Set<Cestas> cesta,
+			String avatar, Set<Valoraciones> valoracionesRecibidas, Set<Cestas> cesta,
 			Set<Valoraciones> valoracionesDadas, Set<Productos> productosFavoritos, Set<Ventas> comprasRealizadas, Set<Productos> productos) {
 		this.id = id;
 		this.direccion = direcciones;
@@ -66,7 +65,6 @@ public class Usuarios implements java.io.Serializable {
 		this.fechaCreacion = fechaCreacion;
 		this.avatar = avatar;
 		this.valoracionesRecibidas = valoracionesRecibidas;
-		this.ventasRealizadas = ventasRealizadas;
 		this.cestas = cesta;
 		this.valoracionesDadas = valoracionesDadas;
 		this.productosFavoritos = productosFavoritos;
@@ -149,15 +147,6 @@ public class Usuarios implements java.io.Serializable {
 
 	public void setValoracionesRecibidas(Set<Valoraciones> valoracionesRecibidas) {
 		this.valoracionesRecibidas = valoracionesRecibidas;
-	}
-
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuarioVendedor")
-	public Set<Ventas> getVentasRealizadas() {
-		return this.ventasRealizadas;
-	}
-
-	public void setVentasRealizadas(Set<Ventas> ventasRealizadas) {
-		this.ventasRealizadas = ventasRealizadas;
 	}
 
 	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)

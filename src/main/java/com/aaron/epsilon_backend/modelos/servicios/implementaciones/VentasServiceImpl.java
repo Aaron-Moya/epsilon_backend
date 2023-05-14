@@ -27,11 +27,6 @@ public class VentasServiceImpl implements IVentasService {
 	}
 
 	@Override
-	public List<Ventas> findByUsuarioVendedor(Usuarios usuario) {
-		return ventasDAO.findByUsuarioVendedor(usuario);
-	}
-
-	@Override
 	public List<Ventas> findByUsuarioComprador(Usuarios usuario) {
 		return ventasDAO.findByUsuarioComprador(usuario);
 	}
