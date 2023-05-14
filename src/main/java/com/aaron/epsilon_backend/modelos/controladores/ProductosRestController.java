@@ -272,11 +272,26 @@ public class ProductosRestController {
 				Productos prod = ventaProducto.getProducto();
 				listaProductosDTO.add(ConverterProductoBiblioteca.convertirProducto(prod, ventaProducto.getCantidad()));
 			});
+			
+			//listaProductosDTO.sort((o1, o2) -> o1.getNombre().compareTo(o2.getNombre()));
+			
 			for (int i = 0; i < listaProductosDTO.size(); i++)
 		    {
 		        for (int j = i + 1; j < listaProductosDTO.size(); j++)
 		        {
-		            if (listaProductosDTO.get(i) != null && listaProductosDTO.get(i).getId() == listaProductosDTO.get(j).getId()) {
+		            if (listaProductosDTO.get(i).getId() == listaProductosDTO.get(j).getId()) {
+		            	listaProductosDTO.get(i).setCantidad(
+		            			listaProductosDTO.get(i).getCantidad() + listaProductosDTO.get(j).getCantidad());
+		            	listaProductosDTO.remove(listaProductosDTO.get(j));
+		            }
+		        }
+		    }
+			
+			for (int i = 0; i < listaProductosDTO.size(); i++)
+		    {
+		        for (int j = i + 1; j < listaProductosDTO.size(); j++)
+		        {
+		            if (listaProductosDTO.get(i).getId() == listaProductosDTO.get(j).getId()) {
 		            	listaProductosDTO.get(i).setCantidad(
 		            			listaProductosDTO.get(i).getCantidad() + listaProductosDTO.get(j).getCantidad());
 		            	listaProductosDTO.remove(listaProductosDTO.get(j));

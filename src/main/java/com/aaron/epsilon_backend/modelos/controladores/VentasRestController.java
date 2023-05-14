@@ -165,7 +165,7 @@ public class VentasRestController {
 				ventasProductosService.findByVenta(ventasService.findById((long) venta.getId()))
 					.forEach(ventaProducto -> {
 						venta.setTotalProductos(venta.getTotalProductos() + ventaProducto.getCantidad());
-					});//.size(); 
+					});
 			});
 		} catch (DataAccessException e) {  // Error al acceder a la base de datos
 			response.put(Const.MENSAJE, Const.ERROR_BD);
